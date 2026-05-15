@@ -45,8 +45,9 @@ export async function pollModelStatus() {
     const srvRes = await fetch('/api/healthcheck', { signal: AbortSignal.timeout(2000) });
     if (srvRes.ok) {
       activeIds.add('infra');
-      const zmqNode = NODES.find((n: any) => n.id === 'inf_zmq');
-      if (zmqNode) zmqNode.status = 'active';
+      // ZMQ kaldırıldı — Panel Server'ı PM2 node'u olarak izle
+      const pm2Node = NODES.find((n: any) => n.id === 'inf_pm2');
+      if (pm2Node) pm2Node.status = 'active';
     }
   } catch(e) {
     activeIds.add('infra');

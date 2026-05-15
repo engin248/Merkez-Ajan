@@ -145,16 +145,47 @@ export async function sendMessage() {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ prompt: text, model: activeModel })
         });
-        const responseText = await res.text();
+
+        // SSE Stream okuyucu — backend "data: {json}\n\n" formatında gönderiyor
+        const reader = res.body!.getReader();
+        const decoder = new TextDecoder();
+        let fullResponse = '';
+        let sseBuffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            sseBuffer += decoder.decode(value, { stream: true });
+            const lines = sseBuffer.split('\n');
+            sseBuffer = lines.pop() || ''; // Son satır eksik olabilir, tamponda tut
+
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const payload = line.slice(6).trim();
+                if (payload === '[DONE]') continue;
+
+                try {
+                    const parsed = JSON.parse(payload);
+                    if (parsed.content) {
+                        fullResponse += parsed.content;
+                    }
+                } catch {
+                    // JSON parse hatası — atla
+                }
+            }
+        }
 
         removeTyping(typingId);
 
-        if (responseText) {
+        if (fullResponse) {
             logger.info(`Ajan yanıtı alındı (${Math.round(performance.now() - startTime)}ms)`);
-            addMessage(chatKomutan, responseText, 'ai');
-            addMessage(chatAnti, responseText, 'anti-msg');
-            speak(responseText);
-            consultChatGPT(text, responseText);
+            addMessage(chatKomutan, fullResponse, 'ai');
+            addMessage(chatAnti, fullResponse, 'anti-msg');
+            speak(fullResponse);
+            consultChatGPT(text, fullResponse);
+        } else {
+            addMessage(chatKomutan, "Yanıt alınamadı.", "system");
         }
     } catch (e: any) {
         removeTyping(typingId);

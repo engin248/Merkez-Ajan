@@ -44,6 +44,53 @@ function ollamaRequest(payload: any): Promise<any> {
     });
 }
 
+// ─── KOMUT YAKALAYICI (Interceptor) ───
+// Model tool calling'de başarısız olduğu yaygın komutları
+// doğrudan yakalayıp çalıştırır. Model'e hiç gitmez.
+async function tryIntercept(content: string): Promise<string | null> {
+    const lower = content.toLowerCase().trim();
+
+    // YouTube aç
+    const ytMatch = lower.match(/youtube['']?(?:da|de|dan|den)?\s+(.+)/i);
+    if (ytMatch) {
+        let query = ytMatch[1].replace(/\s*(aç|çal|oynat|ac|cal)\s*$/i, '').trim();
+        if (query) {
+            const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+            await executeTool('url_ac', { url });
+            return `YouTube'da "${query}" arandı ve açıldı.`;
+        }
+    }
+
+    // Google'da ara
+    const googleMatch = lower.match(/google['']?(?:da|de)?\s+(.+?)(?:\s+ara|$)/i)
+        || lower.match(/(?:ara|arat)\s+google['']?(?:da|de)?\s+(.+)/i);
+    if (googleMatch) {
+        const query = googleMatch[1].trim();
+        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        await executeTool('url_ac', { url });
+        return `Google'da "${query}" arandı ve açıldı.`;
+    }
+
+    // Uygulama aç (calc, notepad, vs.)
+    const appMatch = lower.match(/(?:hesap\s*makine|calculator)/i);
+    if (appMatch) { await executeTool('uygulama_ac', { uygulama: 'calc' }); return 'Hesap makinesi açıldı.'; }
+    const noteMatch = lower.match(/(?:not\s*defteri|notepad)/i);
+    if (noteMatch && lower.includes('aç')) { await executeTool('uygulama_ac', { uygulama: 'notepad' }); return 'Not defteri açıldı.'; }
+
+    // Site aç
+    const siteMatch = lower.match(/(.+?)(?:\s+sitesini|\s+sayfasını)\s*aç/i)
+        || lower.match(/aç\s+(.+?)(?:\s+sitesini|\s+sayfasını)/i);
+    if (siteMatch) {
+        const site = siteMatch[1].trim();
+        let url = site;
+        if (!url.startsWith('http')) url = `https://www.${site.replace(/\s+/g, '')}.com`;
+        await executeTool('url_ac', { url });
+        return `${site} açıldı.`;
+    }
+
+    return null; // Yakalayıcı bu komutu tanımadı, model'e devret
+}
+
 export async function handleChatRoute(req: any, res: any) {
     let body = '';
     req.on('data', chunk => { body += chunk; });
@@ -59,15 +106,34 @@ export async function handleChatRoute(req: any, res: any) {
             const parsed = JSON.parse(body);
             const content = parsed.prompt || parsed.content || '';
             let selectedModel = parsed.model || 'qwen2.5:14b';
-            if (selectedModel === 'qwen3:8b' || selectedModel === 'qwen3.5:latest' || selectedModel === 'qwen2.5:latest') {
+            const DEPRECATED_MODELS = ['qwen3:8b', 'qwen3.5:latest', 'qwen2.5:latest'];
+            if (DEPRECATED_MODELS.includes(selectedModel)) {
                 selectedModel = 'qwen2.5:14b';
             }
 
             console.log(`\n[GELEN SES] "${content}" (Model: ${selectedModel})`);
 
+            // ─── INTERCEPTOR: Yaygın komutları modele bırakmadan doğrudan çalıştır ───
+            const interceptResult = await tryIntercept(content);
+            if (interceptResult) {
+                console.log(`[INTERCEPTOR] Komut yakalandı ve çalıştırıldı: ${interceptResult}`);
+                chatHistory.push({ role: 'user', content });
+                chatHistory.push({ role: 'assistant', content: interceptResult });
+                while (chatHistory.length > MAX_HISTORY) chatHistory.shift();
+                await saveChatState();
+
+                const words = interceptResult.split(/(\\s+)/);
+                for (const word of words) {
+                    res.write(`data: ${JSON.stringify({ content: word })}\n\n`);
+                }
+                res.write('data: [DONE]\n\n');
+                res.end();
+                return;
+            }
+
             chatHistory.push({ role: 'user', content: content });
-            if (chatHistory.length > MAX_HISTORY) chatHistory.shift();
-            await saveChatState(); // Async save
+            // NOT: Geçmiş limiti Ollama yanıtından SONRA uygulanır (off-by-one hatasını önlemek için)
+            await saveChatState();
 
             let systemPrompt = '';
             const agentId = parsed.agent_id || 'core';
@@ -91,7 +157,22 @@ export async function handleChatRoute(req: any, res: any) {
             }
 
             if (!systemPrompt) systemPrompt = 'Sen yetenekli ve pratik bir yapay zeka asistanisin. Turkce konus.';
-            systemPrompt += '\n\n[SON SAVUNMA KURALLARI]\n- Fiyat/güncel bilgi sorulursa web_ara aracını çağır, arama yapmadan fiyat söyleme.\n- Bilmediğin bilgiyi uydurma.\n- Emoji kullanma.';
+            systemPrompt += `\n\n[KİŞİSEL ASİSTAN KURALLARI — MUTLAK]
+- Sen kullanıcının kişisel bilgisayar asistanısın. AÇIKLAMA YAPMA, DOĞRUDAN YAP.
+- Kullanıcı bir şey yapmanı istediğinde NASIL yapılacağını anlatma, ARACI ÇAĞIR VE YAP.
+- "YouTube'da X aç/çal" → url_ac aracını kullan
+- "Google'da X ara" → url_ac aracını kullan
+- "Hesap makinesini aç" / "Notepad aç" → uygulama_ac aracını kullan
+- "GPU/RAM/CPU durumu" → sistem_bilgisi aracını kullan
+- "Dosyaları listele/grupla/taşı/sil/organize et" → pc_komutu_calistir aracıyla PowerShell komutu çalıştır
+- "X sitesini aç" → url_ac aracını kullan
+- "Ekrana bak" / "Ekranda ne var" / "Ne görüyorsun" → ekran_analiz aracını kullan
+- "X dosyasını aç" → dosya_ac aracını kullan
+- Fiyat/güncel bilgi → web_ara aracını çağır
+- ASLA "şu komutu çalıştırabilirsiniz" veya "şu adımları takip edin" gibi AÇIKLAMA yapma
+- ASLA "bunu yapamam" deme
+- Bilmediğin bilgiyi uydurma, emoji kullanma
+- Kullanıcı adı Esisya, masaüstü: C:\\Users\\Esisya\\Desktop`;
 
             const messagesToSend = [
                 { role: 'system', content: systemPrompt },
@@ -99,7 +180,7 @@ export async function handleChatRoute(req: any, res: any) {
                 { role: 'user', content }
             ];
 
-            messagesToSend.push({ role: 'system', content: 'LÜTFEN ÇOK KISA VE ÖZ CEVAP VER. ASKERİ, NET VE KISA KONUŞ. UZUN AÇIKLAMALARDAN KAÇIN.' });
+            messagesToSend.push({ role: 'system', content: 'KRİTİK: AÇIKLAMA YAPMA, DOĞRUDAN ARACI ÇAĞIR VE YAP. Kullanıcı dosya taşımak, gruplamak, silmek, organize etmek istiyorsa pc_komutu_calistir aracıyla PowerShell komutu çalıştır. "Şu komutu çalıştırabilirsiniz" gibi cümleler YASAK. İşlemi KENDİN yap ve kısa rapor ver.' });
             
             const basePayload = {
                 model: selectedModel,
@@ -107,7 +188,7 @@ export async function handleChatRoute(req: any, res: any) {
                 stream: false,
                 keep_alive: "24h",
                 tools: TOOL_DEFINITIONS,
-                options: { temperature: 0.6, top_p: 0.85, top_k: 40, repeat_penalty: 1.8, num_predict: 128, num_ctx: 8192, presence_penalty: 0.8, frequency_penalty: 0.7 },
+                options: { temperature: 0.6, top_p: 0.85, top_k: 40, repeat_penalty: 1.8, num_predict: 512, num_ctx: 8192, presence_penalty: 0.8, frequency_penalty: 0.7 },
                 think: false
             };
 
@@ -115,9 +196,15 @@ export async function handleChatRoute(req: any, res: any) {
 
             // FALLBACK logic
             if (response.error && response.error.includes("not found")) {
-                console.log(`[YEDEK MODEL] ${basePayload.model} henüz iniyor veya bulunamadı. Geçici olarak 8B'ye dönülüyor...`);
-                basePayload.model = "qwen2.5:latest";
-                response = await ollamaRequest(basePayload);
+                console.log(`[YEDEK MODEL] ${basePayload.model} bulunamadı. Mevcut modelleri kontrol ediyor...`);
+                // Döngüyü kırmak için sabit bir fallback zinciri kullan
+                const FALLBACK_CHAIN = ['qwen2.5:14b', 'qwen2.5:latest', 'qwen2.5:7b'];
+                const currentIdx = FALLBACK_CHAIN.indexOf(basePayload.model);
+                const nextModel = FALLBACK_CHAIN[currentIdx + 1] || FALLBACK_CHAIN[FALLBACK_CHAIN.length - 1];
+                if (nextModel !== basePayload.model) {
+                    basePayload.model = nextModel;
+                    response = await ollamaRequest(basePayload);
+                }
             }
 
             if (response.error) throw new Error(response.error);
@@ -159,8 +246,9 @@ export async function handleChatRoute(req: any, res: any) {
                 }
 
                 chatHistory.push({ role: 'assistant', content: fullAiResponse });
-                if (chatHistory.length > MAX_HISTORY) chatHistory.shift();
-                await saveChatState(); // Async save
+                // Geçmiş limitini burada uygula (user + assistant eklenmiş haliyle)
+                while (chatHistory.length > MAX_HISTORY) chatHistory.shift();
+                await saveChatState();
 
                 try {
                     await db.addChatMessage(agentId, 'user', content);

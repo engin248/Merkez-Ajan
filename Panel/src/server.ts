@@ -6,11 +6,10 @@ import * as url from 'url';
 import * as db from './db';
 import * as ts from 'typescript';
 import { handleChatRoute } from './routes/chatHandler';
+import { handlePcControl } from './routes/pcControlHandler';
 import { 
     startZMQBridge, 
     cleanupProcesses, 
-    scheduleZMQRestart, 
-    sendToZmq, 
     startOllamaService,
     startVoiceEngine,
     startRVCServer
@@ -50,26 +49,15 @@ const server = http.createServer(async (req: any, res: any) => {
     }
 
     if (parsedUrl.pathname === '/api/konus' && req.method === 'POST') {
-        let body = '';
-        req.on('data', (chunk: any) => { body += chunk; });
-        req.on('end', () => {
-            try {
-                const parsed = JSON.parse(body);
-                const metin = parsed.metin || "Emredersiniz.";
-                
-                const payload = JSON.stringify({ text: metin }) + '\n';
-                const success = sendToZmq(payload);
-                if (success) {
-                    res.end(JSON.stringify({ durum: 'OK', mesaj: 'Kuyruğa eklendi' }));
-                } else {
-                    res.end(JSON.stringify({ durum: 'HATA', neden: 'ZMQ Buffer Dolu veya Köprü Çökmüş.' }));
-                }
-            } catch(e: any) { 
-                logger.error('Konuşma API Hatası:', e.message);
-                res.end(JSON.stringify({ durum: 'HATA', neden: e.message })); 
-            }
-        });
+        // ZMQ Bridge kaldırıldı — Native Web Speech API kullanılıyor.
+        // Bu endpoint artık deprecated. Frontend doğrudan Web Speech API kullanıyor.
+        res.writeHead(410, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ durum: 'DEPRECATED', mesaj: 'Ses sistemi artık Native Web Speech API ile çalışıyor. Bu endpoint kullanım dışıdır.' }));
         return;
+    }
+
+    if (parsedUrl.pathname === '/api/pc-control' && req.method === 'POST') {
+        return handlePcControl(req, res);
     }
 
     if (parsedUrl.pathname === '/api/graph-state' && req.method === 'GET') {

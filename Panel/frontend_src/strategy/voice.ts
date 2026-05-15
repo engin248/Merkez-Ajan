@@ -139,22 +139,41 @@ export function initVoiceChat() {
             const res = await fetch('/api/sohbet', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: text, model: 'qwen3:8b' }),
+                body: JSON.stringify({ prompt: text, model: 'qwen2.5:14b' }),
                 signal: ollamaAbortController.signal
             });
             if (!isActive) return;
             const reader = res.body.getReader();
             const decoder = new TextDecoder("utf-8");
             let fullReply = '';
+            let buffer = '';
             transcript.innerHTML = `<div class="user-said">Sen: "${text}"</div><div class="ai-said" id="ai-response-stream"></div>`;
             const replyDiv = document.getElementById('ai-response-stream');
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
-                fullReply += decoder.decode(value, { stream: true });
+                buffer += decoder.decode(value, { stream: true });
+                // SSE formatını parse et: "data: {...}\n\n" satırlarını çöz
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || ''; // Son eksik satırı buffer'da tut
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const payload = line.slice(6).trim();
+                        if (payload === '[DONE]') continue;
+                        try {
+                            const parsed = JSON.parse(payload);
+                            if (parsed.content) fullReply += parsed.content;
+                        } catch(e) {
+                            // JSON parse hatası — ham metin olarak ekle
+                            fullReply += payload;
+                        }
+                    }
+                }
                 if (replyDiv) replyDiv.innerHTML = fullReply;
             }
-            if (fullReply.trim()) ttsManager.enqueue(fullReply.trim());
+            // TTS için HTML etiketlerini temizle
+            const cleanText = fullReply.replace(/<[^>]*>/g, '').trim();
+            if (cleanText) ttsManager.enqueue(cleanText);
         } catch (err) {
             if (err.name === 'AbortError') return;
             console.error('Ollama error:', err);
@@ -171,4 +190,5 @@ export function initVoiceChat() {
     window.speechSynthesis.getVoices();
 }
 
-document.addEventListener('DOMContentLoaded', initVoiceChat);
+// initVoiceChat() strategy.ts tarafından açıkça çağrılıyor.
+// Çift çağrıyı önlemek için DOMContentLoaded listener kaldırıldı.

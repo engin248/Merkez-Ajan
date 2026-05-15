@@ -367,3 +367,588 @@
 [2026-05-15T02:53:43.886Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
 [2026-05-15T02:53:48.872Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
 [2026-05-15T02:53:48.873Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:53:53.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:53:53.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:53:58.826Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:53:58.827Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:54:03.892Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:54:03.893Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:54:08.892Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:54:08.893Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:54:13.890Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:54:13.891Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:54:18.893Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:54:18.895Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:54:23.876Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:54:23.877Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:54:28.892Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:54:28.893Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:54:33.882Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:54:33.883Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:54:38.883Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:54:38.884Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:55:17.569Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:17.570Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:55:18.824Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:18.824Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:55:23.830Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:23.830Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:55:28.834Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:28.835Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:55:33.829Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:33.830Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:55:37.176Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T02:55:38.831Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:38.832Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:55:39.302Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (2126ms)
+[2026-05-15T02:55:43.834Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:43.835Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:55:48.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:48.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:55:53.828Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:53.829Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:55:58.826Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:55:58.827Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:03.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:03.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:08.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:08.836Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:56:10.048Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T02:56:12.730Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (2682ms)
+[2026-05-15T02:56:13.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:13.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:18.880Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:18.881Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:23.829Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:23.829Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:56:28.829Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:28.830Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:33.826Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:33.827Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:38.848Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:38.849Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:43.840Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:43.841Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:48.839Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:48.840Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:53.826Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:53.827Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:56:58.844Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:56:58.844Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:57:03.848Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:03.849Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:57:08.843Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:08.843Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:57:13.830Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:13.831Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:57:18.841Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:18.844Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (3ms)
+[2026-05-15T02:57:23.837Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:23.838Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:57:28.830Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:28.831Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:57:33.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:33.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:57:38.845Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:38.846Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:57:43.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:43.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:57:48.831Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:48.832Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:57:53.838Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:53.840Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:57:58.849Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:57:58.850Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:03.841Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:03.842Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:08.845Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:08.846Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:13.830Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:13.831Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:18.837Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:18.838Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:23.830Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:23.831Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:28.837Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:28.838Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:33.846Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:33.847Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:38.830Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:38.831Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:43.843Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:43.844Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:58:48.832Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:48.832Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:58:53.857Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:53.859Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:58:58.834Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:58:58.835Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:59:03.835Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:03.835Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:59:08.834Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:08.835Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:59:13.831Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:13.832Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:59:18.833Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:18.834Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:59:23.831Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:23.832Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:59:28.837Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:28.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:59:33.834Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:33.834Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:59:38.833Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:38.833Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:59:43.833Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:43.834Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:59:48.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:48.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:59:53.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:53.836Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:59:58.834Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:59:58.834Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:00:03.838Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:03.839Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:00:08.834Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:08.834Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:00:13.838Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:13.839Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:00:18.835Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:18.836Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:00:23.835Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:23.835Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:00:28.838Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:28.839Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:00:33.835Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:33.836Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:00:38.837Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:38.838Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:00:43.839Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:43.840Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:00:48.841Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:48.842Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:00:53.856Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:53.857Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:00:58.855Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:00:58.855Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:01:03.845Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:03.846Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:01:08.843Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:08.845Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T03:01:13.842Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:13.843Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:01:18.842Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:18.843Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:01:23.843Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:23.843Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:01:28.842Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:28.843Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:01:33.847Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:33.848Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:01:38.849Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:38.850Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:01:43.834Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:43.834Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:01:48.845Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:48.846Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:01:53.846Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:53.846Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:01:58.842Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:01:58.842Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:02:03.847Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:03.847Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:02:08.843Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:08.843Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:02:13.848Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:13.848Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:02:18.833Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:18.834Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:02:23.850Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:23.851Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:02:28.843Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:28.844Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:02:33.837Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:33.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:02:38.840Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:38.841Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:02:43.840Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:43.841Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:02:48.845Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:48.845Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:02:53.835Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:53.836Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:02:58.835Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:02:58.836Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:03:03.832Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:03.832Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:03:08.832Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:08.833Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:03:13.830Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:13.830Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:03:18.840Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:18.841Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:03:23.833Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:23.834Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:03:28.841Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:28.842Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:03:33.848Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:33.849Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:03:38.843Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:38.844Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:03:43.841Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:43.841Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:03:48.848Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:48.849Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:03:53.832Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:53.833Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:03:58.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:03:58.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:04:03.848Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:04:03.849Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:04:08.834Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:04:08.835Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:04:13.842Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:04:13.843Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:04:18.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:04:18.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:04:23.835Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:04:23.836Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:04:28.840Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:04:28.841Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:04:33.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:04:33.876Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (40ms)
+[2026-05-15T03:04:38.840Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:04:38.841Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:04:43.836Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:04:43.837Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:04:48.524Z] [TRACE] [Server] [STATIC] GET /training.html - 200 (0ms)
+[2026-05-15T03:04:48.536Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (1ms)
+[2026-05-15T03:04:48.539Z] [TRACE] [Server] [STATIC] GET /frontend_src/training.ts - 200 (2ms)
+[2026-05-15T03:04:48.542Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (5ms)
+[2026-05-15T03:04:48.547Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (10ms)
+[2026-05-15T03:04:48.617Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/data.ts - 200 (3ms)
+[2026-05-15T03:04:48.630Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/ui.ts - 200 (16ms)
+[2026-05-15T03:04:48.643Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/renderer.ts - 200 (28ms)
+[2026-05-15T03:04:48.647Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/state.ts - 200 (32ms)
+[2026-05-15T03:04:48.652Z] [TRACE] [Server] [STATIC] GET /frontend_src/utils/logger - 200 (4ms)
+[2026-05-15T03:04:48.655Z] [INFO] [WebSocket] Browser connected to Telemetry Bridge
+[2026-05-15T03:04:51.923Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":264}
+[2026-05-15T03:04:54.935Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T03:04:57.946Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":261}
+[2026-05-15T03:05:00.941Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":248}
+[2026-05-15T03:05:03.941Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":247}
+[2026-05-15T03:05:06.946Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":248}
+[2026-05-15T03:05:09.961Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":261}
+[2026-05-15T03:05:12.979Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":265}
+[2026-05-15T03:05:15.988Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":266}
+[2026-05-15T03:05:18.990Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":261}
+[2026-05-15T03:05:22.008Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T03:05:25.018Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T03:05:28.030Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":262}
+[2026-05-15T03:05:31.015Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T03:05:34.040Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":261}
+[2026-05-15T03:05:37.050Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T03:05:40.061Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T03:05:43.086Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":280}
+[2026-05-15T03:05:46.094Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":280}
+[2026-05-15T03:05:49.066Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":250}
+[2026-05-15T03:05:52.093Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T03:05:55.097Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":262}
+[2026-05-15T03:05:58.100Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T03:06:01.086Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":247}
+[2026-05-15T03:06:04.094Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":252}
+[2026-05-15T03:06:07.120Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":265}
+[2026-05-15T03:06:10.122Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":264}
+[2026-05-15T03:06:13.140Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":269}
+[2026-05-15T03:06:16.132Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":249}
+[2026-05-15T03:06:19.155Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T03:06:22.163Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":264}
+[2026-05-15T03:06:25.173Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":262}
+[2026-05-15T03:06:28.184Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":264}
+[2026-05-15T03:06:31.184Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":250}
+[2026-05-15T03:06:34.205Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T03:06:37.209Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":266}
+[2026-05-15T03:06:40.201Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":247}
+[2026-05-15T03:06:43.224Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":264}
+[2026-05-15T03:06:46.219Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":247}
+[2026-05-15T03:06:49.258Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":278}
+[2026-05-15T03:06:52.232Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T03:06:55.265Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":275}
+[2026-05-15T03:06:58.267Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":262}
+[2026-05-15T03:07:01.260Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T03:07:04.274Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T03:07:07.301Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":264}
+[2026-05-15T03:07:10.291Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":245}
+[2026-05-15T03:07:10.750Z] [TRACE] [Server] [STATIC] GET /training.html - 200 (1ms)
+[2026-05-15T03:07:10.754Z] [INFO] [WebSocket] Browser disconnected from Telemetry Bridge
+[2026-05-15T03:07:10.765Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (1ms)
+[2026-05-15T03:07:10.769Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (3ms)
+[2026-05-15T03:07:10.773Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (7ms)
+[2026-05-15T03:07:10.775Z] [TRACE] [Server] [STATIC] GET /frontend_src/training.ts - 200 (9ms)
+[2026-05-15T03:07:10.900Z] [TRACE] [Server] [STATIC] GET /training.html - 200 (1ms)
+[2026-05-15T03:07:10.909Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (1ms)
+[2026-05-15T03:07:10.913Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (5ms)
+[2026-05-15T03:07:10.915Z] [TRACE] [Server] [STATIC] GET /frontend_src/training.ts - 200 (7ms)
+[2026-05-15T03:07:10.917Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (8ms)
+[2026-05-15T03:07:10.988Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/data.ts - 200 (2ms)
+[2026-05-15T03:07:11.004Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/ui.ts - 200 (18ms)
+[2026-05-15T03:07:11.020Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/renderer.ts - 200 (34ms)
+[2026-05-15T03:07:11.024Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/state.ts - 200 (38ms)
+[2026-05-15T03:07:11.029Z] [TRACE] [Server] [STATIC] GET /frontend_src/utils/logger - 200 (4ms)
+[2026-05-15T03:07:11.032Z] [INFO] [WebSocket] Browser connected to Telemetry Bridge
+[2026-05-15T03:07:12.790Z] [TRACE] [Server] [STATIC] GET /strategy.html - 200 (0ms)
+[2026-05-15T03:07:12.794Z] [INFO] [WebSocket] Browser disconnected from Telemetry Bridge
+[2026-05-15T03:07:12.802Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (1ms)
+[2026-05-15T03:07:12.804Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (3ms)
+[2026-05-15T03:07:12.808Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (7ms)
+[2026-05-15T03:07:12.833Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy.ts - 200 (31ms)
+[2026-05-15T03:07:12.849Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/voice.ts - 200 (5ms)
+[2026-05-15T03:07:12.857Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel_renderer.ts - 200 (14ms)
+[2026-05-15T03:07:12.862Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/data.ts - 200 (18ms)
+[2026-05-15T03:07:12.874Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/context_menu.ts - 200 (30ms)
+[2026-05-15T03:07:12.880Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/logger.ts - 200 (6ms)
+[2026-05-15T03:07:12.883Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/monitor.ts - 200 (25ms)
+[2026-05-15T03:07:12.886Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/state.ts - 200 (11ms)
+[2026-05-15T03:07:12.893Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/renderer.ts - 200 (17ms)
+[2026-05-15T03:07:12.896Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/training.ts - 200 (20ms)
+[2026-05-15T03:07:12.900Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel.ts - 200 (24ms)
+[2026-05-15T03:07:13.008Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:13.009Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:07:17.996Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:17.997Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:07:22.996Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:22.997Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:07:28.004Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:28.005Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:07:31.970Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T03:07:32.997Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:32.998Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:07:37.231Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (5261ms)
+[2026-05-15T03:07:38.003Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:38.003Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:07:43.000Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:43.001Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:07:48.030Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:48.031Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:07:52.993Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:52.994Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:07:58.004Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:07:58.004Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:08:03.000Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:03.001Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:08:08.000Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:08.000Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:08:12.994Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:12.995Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:08:18.004Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:18.004Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:08:22.994Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:22.994Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:08:27.997Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:27.998Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:08:33.013Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:33.014Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:08:37.980Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:37.981Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:08:43.009Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:43.009Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:08:48.019Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:48.020Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:08:52.998Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:52.999Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:08:53.811Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T03:08:55.647Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (1836ms)
+[2026-05-15T03:08:57.989Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:08:57.990Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:09:03.009Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:03.010Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:09:07.997Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:07.997Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:09:12.992Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:12.993Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:09:17.993Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:17.994Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T03:09:28.336Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T03:09:28.337Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T03:09:28.345Z] [DEBUG] [ProcessManager] ZMQ Bridge (Deprecated/Native)
+[2026-05-15T03:09:28.345Z] [DEBUG] [ProcessManager] Voice Engine (Native/WebSpeech API)
+[2026-05-15T03:09:28.346Z] [DEBUG] [ProcessManager] RVC Server (Deprecated/Native)
+[2026-05-15T03:09:28.348Z] [INFO] [Server] PANEL Started: http://localhost:8085 | WS: 8086
+[2026-05-15T03:09:29.921Z] [TRACE] [Server] [STATIC] GET / - 200 (4ms)
+[2026-05-15T03:09:29.929Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (1ms)
+[2026-05-15T03:09:29.939Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (8ms)
+[2026-05-15T03:09:29.948Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (17ms)
+[2026-05-15T03:09:29.990Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy.ts - 200 (59ms)
+[2026-05-15T03:09:30.081Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/voice.ts - 200 (13ms)
+[2026-05-15T03:09:30.092Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel_renderer.ts - 200 (24ms)
+[2026-05-15T03:09:30.099Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/data.ts - 200 (31ms)
+[2026-05-15T03:09:30.113Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/context_menu.ts - 200 (44ms)
+[2026-05-15T03:09:30.120Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/monitor.ts - 200 (50ms)
+[2026-05-15T03:09:30.125Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/state.ts - 200 (33ms)
+[2026-05-15T03:09:30.130Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/logger.ts - 200 (37ms)
+[2026-05-15T03:09:30.134Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/training.ts - 200 (41ms)
+[2026-05-15T03:09:30.138Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel.ts - 200 (23ms)
+[2026-05-15T03:09:30.148Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/renderer.ts - 200 (27ms)
+[2026-05-15T03:09:30.359Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:30.373Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (14ms)
+[2026-05-15T03:09:31.215Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (1ms)
+[2026-05-15T03:09:35.273Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:35.273Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:09:40.242Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:40.243Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:09:45.249Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:45.250Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:09:46.791Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T03:09:50.245Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:50.246Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:09:51.710Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (4919ms)
+[2026-05-15T03:09:55.245Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:09:55.245Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:10:00.239Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:00.240Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:03.165Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T03:10:05.242Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:05.243Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:08.250Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (5085ms)
+[2026-05-15T03:10:10.242Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:10.243Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:15.247Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:15.248Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:20.235Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:20.236Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:25.261Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:25.262Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:30.246Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:30.247Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:35.242Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:35.243Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:40.243Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:40.244Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:45.245Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:45.246Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:50.239Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:50.240Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:10:55.246Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:10:55.247Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:11:00.235Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:00.236Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:11:05.244Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:05.245Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:11:10.251Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:10.252Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:11:15.246Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:15.247Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:11:20.240Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:20.241Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:11:25.246Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:25.247Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:11:30.245Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:30.245Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:11:35.251Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:35.253Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T03:11:40.246Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:40.247Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:11:45.254Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:45.254Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:11:50.243Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:11:50.244Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:12:13.854Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T03:12:13.855Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T03:12:13.862Z] [DEBUG] [ProcessManager] ZMQ Bridge (Deprecated/Native)
+[2026-05-15T03:12:13.863Z] [DEBUG] [ProcessManager] Voice Engine (Native/WebSpeech API)
+[2026-05-15T03:12:13.863Z] [DEBUG] [ProcessManager] RVC Server (Deprecated/Native)
+[2026-05-15T03:12:13.865Z] [INFO] [Server] PANEL Started: http://localhost:8085 | WS: 8086
+[2026-05-15T03:12:15.444Z] [TRACE] [Server] [STATIC] GET / - 200 (5ms)
+[2026-05-15T03:12:15.476Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (10ms)
+[2026-05-15T03:12:15.530Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy.ts - 200 (63ms)
+[2026-05-15T03:12:15.534Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (67ms)
+[2026-05-15T03:12:15.541Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (74ms)
+[2026-05-15T03:12:15.631Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel_renderer.ts - 200 (10ms)
+[2026-05-15T03:12:15.648Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/context_menu.ts - 200 (27ms)
+[2026-05-15T03:12:15.655Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/data.ts - 200 (22ms)
+[2026-05-15T03:12:15.663Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/voice.ts - 200 (31ms)
+[2026-05-15T03:12:15.668Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/logger.ts - 200 (34ms)
+[2026-05-15T03:12:15.676Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/monitor.ts - 200 (42ms)
+[2026-05-15T03:12:15.679Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/state.ts - 200 (45ms)
+[2026-05-15T03:12:15.685Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/training.ts - 200 (5ms)
+[2026-05-15T03:12:15.694Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/renderer.ts - 200 (14ms)
+[2026-05-15T03:12:15.698Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel.ts - 200 (18ms)
+[2026-05-15T03:12:15.897Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:12:15.897Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:12:16.709Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (2ms)
+[2026-05-15T03:12:20.894Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:12:20.895Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:12:25.900Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:12:25.900Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:12:28.164Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T03:12:28.194Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (30ms)
+[2026-05-15T03:12:30.894Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:12:30.895Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:12:35.902Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:12:35.903Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:12:40.898Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:12:40.899Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:12:45.792Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:12:45.793Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:12:50.789Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:12:50.790Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:12:55.801Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:12:55.802Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:13:00.805Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:00.806Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:13:05.792Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:05.793Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:13:10.788Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:10.789Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:13:24.449Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T03:13:24.450Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T03:13:24.459Z] [DEBUG] [ProcessManager] ZMQ Bridge (Deprecated/Native)
+[2026-05-15T03:13:24.459Z] [DEBUG] [ProcessManager] Voice Engine (Native/WebSpeech API)
+[2026-05-15T03:13:24.460Z] [DEBUG] [ProcessManager] RVC Server (Deprecated/Native)
+[2026-05-15T03:13:24.462Z] [INFO] [Server] PANEL Started: http://localhost:8085 | WS: 8086
+[2026-05-15T03:13:26.058Z] [TRACE] [Server] [STATIC] GET / - 200 (16ms)
+[2026-05-15T03:13:26.080Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (4ms)
+[2026-05-15T03:13:26.132Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy.ts - 200 (55ms)
+[2026-05-15T03:13:26.136Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (59ms)
+[2026-05-15T03:13:26.142Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (65ms)
+[2026-05-15T03:13:26.231Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel_renderer.ts - 200 (13ms)
+[2026-05-15T03:13:26.245Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/context_menu.ts - 200 (26ms)
+[2026-05-15T03:13:26.251Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/data.ts - 200 (32ms)
+[2026-05-15T03:13:26.254Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/state.ts - 200 (35ms)
+[2026-05-15T03:13:26.259Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/monitor.ts - 200 (40ms)
+[2026-05-15T03:13:26.267Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/voice.ts - 200 (48ms)
+[2026-05-15T03:13:26.274Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/logger.ts - 200 (5ms)
+[2026-05-15T03:13:26.278Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/training.ts - 200 (9ms)
+[2026-05-15T03:13:26.283Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel.ts - 200 (14ms)
+[2026-05-15T03:13:26.293Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/renderer.ts - 200 (24ms)
+[2026-05-15T03:13:26.502Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:26.503Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:13:27.332Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (2ms)
+[2026-05-15T03:13:31.389Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:31.389Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:13:36.391Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:36.392Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:13:41.405Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:41.406Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:13:44.507Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T03:13:44.525Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (18ms)
+[2026-05-15T03:13:46.891Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:46.892Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:13:51.386Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:51.387Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:13:56.387Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:13:56.388Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:14:01.393Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:14:01.394Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:14:06.393Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:14:06.394Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:14:11.394Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:14:11.395Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:14:16.394Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:14:16.394Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T03:14:21.384Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:14:21.385Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:14:26.390Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:14:26.391Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T03:14:31.389Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T03:14:31.390Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)

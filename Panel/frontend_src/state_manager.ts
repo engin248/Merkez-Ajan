@@ -10,18 +10,19 @@
     const raw = localStorage.getItem('asker_motoru_state');
     if (raw) {
       const s = JSON.parse(raw);
-      if (s.activeModel && (s.activeModel.includes('qwen2.5') || s.activeModel === 'qwen3.5:latest')) {
-        s.activeModel = 'qwen3:8b';
-        s.activeModelName = 'Qwen 3 (Merkez)';
+      const OBSOLETE = ['qwen2.5', 'qwen2.5:latest', 'qwen3:8b', 'qwen3.5:latest'];
+      if (s.activeModel && OBSOLETE.some(m => s.activeModel.includes(m))) {
+        s.activeModel = 'qwen2.5:14b';
+        s.activeModelName = 'Qwen 2.5 (Merkez)';
         localStorage.setItem('asker_motoru_state', JSON.stringify(s));
-        console.log('[MIGRATION] Model güncellendi: qwen3:8b');
+        console.log('[MIGRATION] Model güncellendi: qwen2.5:14b');
       }
     }
     // Ayrıca eski localStorage activeModel key'ini de temizle
     const oldModel = localStorage.getItem('activeModel');
-    if (oldModel && (oldModel.includes('qwen2.5') || oldModel === 'qwen3.5:latest')) {
-      localStorage.setItem('activeModel', 'qwen3:8b');
-      console.log('[MIGRATION] localStorage.activeModel güncellendi: qwen3:8b');
+    if (oldModel && (oldModel.includes('qwen2.5') || oldModel === 'qwen3.5:latest' || oldModel === 'qwen3:8b')) {
+      localStorage.setItem('activeModel', 'qwen2.5:14b');
+      console.log('[MIGRATION] localStorage.activeModel güncellendi: qwen2.5:14b');
     }
   } catch(e) {}
 })();
@@ -33,8 +34,8 @@ const StateManager = (() => {
 
   // ── Varsayılan state yapısı ──
   const DEFAULT_STATE = {
-    activeModel: 'qwen3:8b',
-    activeModelName: 'Qwen 3.5 (Merkez)',
+    activeModel: 'qwen2.5:14b',
+    activeModelName: 'Qwen 2.5 (Merkez)',
     camera: { x: 0, y: 0, zoom: 1 },
     lastPage: '/',
     theme: 'dark',

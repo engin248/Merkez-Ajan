@@ -44,6 +44,7 @@ export function loadGraphState() {
         parent: saved.parent || undefined,
         children: saved.children || [],
         info: saved.info || [],
+        capabilities: saved.capabilities || [],
         status: 'idle',
         statusSince: 0,
         statusPulse: 0

@@ -1,7 +1,8 @@
-const { exec } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+import { exec } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
+import * as http from 'http';
 
 /**
  * ══════════════════════════════════════════════════════════════
@@ -78,11 +79,11 @@ export const TOOL_DEFINITIONS = [
         type: 'function',
         function: {
             name: 'url_ac',
-            description: 'Varsayilan tarayicida herhangi bir web sitesini acar. Her turlu URL acabilir. Arama formatlari: Google icin https://www.google.com/search?q=aranacak+kelime, YouTube icin https://www.youtube.com/results?search_query=sarki+adi, Trendyol icin https://www.trendyol.com/sr?q=urun+adi seklinde kullan.',
+            description: 'Varsayilan tarayicida herhangi bir web sitesini veya arama sayfasini acar. Kullanici "YouTube da sarki ac", "Google da ara", "Trendyol da bak", "X sitesini ac" gibi bir sey soylediginde MUTLAKA bu araci kullan. YouTube icin https://www.youtube.com/results?search_query=ARANACAK, Google icin https://www.google.com/search?q=ARANACAK, Trendyol icin https://www.trendyol.com/sr?q=ARANACAK seklinde URL olustur.',
             parameters: {
                 type: 'object',
                 properties: {
-                    url: { type: 'string', description: 'Acilacak web adresi. Ornekler: https://www.google.com/search?q=istanbul+transfer, https://www.youtube.com/results?search_query=central+cee' },
+                    url: { type: 'string', description: 'Acilacak web adresi. Ornekler: https://www.youtube.com/results?search_query=central+cee, https://www.google.com/search?q=istanbul+hava+durumu, https://twitter.com, https://www.trendyol.com/sr?q=ayakkabi' },
                     baslik: { type: 'string', description: 'Opsiyonel. Arama sorgusu metni. Ornek: central cee, istanbul transfer' }
                 },
                 required: ['url']
@@ -135,12 +136,40 @@ export const TOOL_DEFINITIONS = [
         type: 'function',
         function: {
             name: 'ekran_goruntusu',
-            description: 'Ekranin goruntusu alir ve kaydeder. Ekranda ne var, ekrana bak gibi isteklerde kullan.',
+            description: 'Ekranin goruntusu alir ve kaydeder. Sadece kaydetmek icin kullan.',
             parameters: {
                 type: 'object',
                 properties: {
                     dosya_adi: { type: 'string', description: 'Kaydedilecek dosya adi. Varsayilan: screenshot.png' }
                 }
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'ekran_analiz',
+            description: 'Ekranin goruntusunu alir ve yapay zeka ile analiz eder. Ekranda ne var, ekrana bak, ne goruyorsun, ekrandaki yaziyi oku, ekrandaki dosyalari soyle gibi isteklerde MUTLAKA bu araci kullan. Kullanici ekranini anlamani istediginde bu araci cagir.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    soru: { type: 'string', description: 'Ekran hakkinda sorulacak soru. Ornek: Ekranda ne var?, Hangi dosyalar acik?, Ekrandaki yaziyi oku' }
+                },
+                required: ['soru']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'dosya_ac',
+            description: 'Belirtilen dosyayi veya klasoru Windows da varsayilan uygulama ile acar. Kullanici bir dosya, resim, video, PDF veya klasor acmak istediginde bu araci kullan.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    yol: { type: 'string', description: 'Acilacak dosya veya klasorun tam yolu. Ornek: C:\\Users\\Esisya\\Desktop\\rapor.pdf, C:\\Users\\Esisya\\Desktop' }
+                },
+                required: ['yol']
             }
         }
     },
@@ -371,6 +400,84 @@ const EXECUTORS: Record<string, (args: any) => Promise<ToolResult>> = {
             return { success: true, output: result.output || `Ekran goruntusu alindi: ${savePath}` };
         }
         return { success: false, error: `Ekran goruntusu alinamadi: ${result.error || ''}` };
+    },
+
+    ekran_analiz: async (args) => {
+        const soru = args.soru || 'Ekranda ne goruyorsun? Detayli acikla.';
+        const savePath = path.join(os.tmpdir(), 'ekran_analiz.png');
+        console.log(`[TOOL] Ekran analiz basliyor: ${soru}`);
+
+        // 1. Ekran goruntusunu al
+        const psCmd = `Add-Type -AssemblyName System.Windows.Forms; Add-Type -AssemblyName System.Drawing; $s = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds; $b = New-Object System.Drawing.Bitmap($s.Width, $s.Height); $g = [System.Drawing.Graphics]::FromImage($b); $g.CopyFromScreen($s.Location, [System.Drawing.Point]::Empty, $s.Size); $b.Save("${savePath.replace(/\\/g, '\\\\')}"); $g.Dispose(); $b.Dispose()`;
+        const ssResult = await runPowerShell(psCmd, 10000);
+        if (!ssResult.success) return { success: false, error: 'Ekran goruntusu alinamadi' };
+
+        // 2. Base64'e cevir
+        let imageBase64: string;
+        try {
+            const imgBuffer = await fs.promises.readFile(savePath);
+            imageBase64 = imgBuffer.toString('base64');
+        } catch (e: any) {
+            return { success: false, error: `Goruntu okunamadi: ${e.message}` };
+        }
+
+        // 3. Vision modeline gonder (Ollama multimodal API)
+        const VISION_MODEL = 'llava:latest';
+        const payload = {
+            model: VISION_MODEL,
+            messages: [
+                {
+                    role: 'user',
+                    content: soru + ' Turkce cevap ver. Kisa ve net ol.',
+                    images: [imageBase64]
+                }
+            ],
+            stream: false,
+            options: { temperature: 0.3, num_predict: 1024 }
+        };
+
+        return new Promise((resolve) => {
+            const data = JSON.stringify(payload);
+            const oReq = http.request({
+                hostname: 'localhost', port: 11434, path: '/api/chat',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            }, (oRes: any) => {
+                let buf = '';
+                oRes.on('data', (c: any) => buf += c);
+                oRes.on('end', () => {
+                    try {
+                        const parsed = JSON.parse(buf);
+                        const answer = parsed.message?.content || 'Vision modeli cevap veremedi.';
+                        console.log(`[TOOL] Ekran analiz tamamlandi (${answer.length} karakter)`);
+                        resolve({ success: true, output: answer.substring(0, 3000) });
+                    } catch {
+                        resolve({ success: false, error: 'Vision modeli JSON parse hatasi' });
+                    }
+                });
+            });
+            oReq.on('error', (e: any) => {
+                resolve({ success: false, error: `Vision modeli baglanti hatasi: ${e.message}` });
+            });
+            oReq.setTimeout(60000, () => {
+                oReq.destroy();
+                resolve({ success: false, error: 'Vision modeli timeout (60s)' });
+            });
+            oReq.write(data);
+            oReq.end();
+        });
+    },
+
+    dosya_ac: async (args) => {
+        const yol = args.yol;
+        if (!yol) return { success: false, error: 'Dosya yolu belirtilmedi' };
+        console.log(`[TOOL] Dosya aciliyor: ${yol}`);
+        return new Promise((resolve) => {
+            exec(`start "" "${yol}"`, (err: any) => {
+                if (err) resolve({ success: false, error: `Dosya acilamadi: ${err.message}` });
+                else resolve({ success: true, output: `Dosya acildi: ${yol}` });
+            });
+        });
     },
 
     aktif_pencereler: async () => {

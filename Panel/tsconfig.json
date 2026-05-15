@@ -7,9 +7,9 @@
     "strict": false,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "allowJs": true,
     "types": ["node", "ws"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "core/**/*"]
 }
