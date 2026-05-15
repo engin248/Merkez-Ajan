@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASKER MOTORU // STRATEGY MAP</title>
+    <link rel="stylesheet" href="strategy.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;900&family=JetBrains+Mono:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- SCAN LINE OVERLAY -->
+    <div class="scanline"></div>
+
+    <!-- ═══ SHARED TOP BAR ═══ -->
+    <header class="topbar" id="mainTopbar"></header>
+    <script src="frontend_src/shared_header.ts"></script>
+    <script>
+      // Strategy sayfasına özel sağ taraf içeriği
+      const slot = document.getElementById('headerRightSlot');
+      if (slot) slot.innerHTML = `
+        <div class="topbar-actions">
+          <div class="add-dropdown-wrap">
+            <button class="tb-btn primary" id="addNodeToggle">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Ekle ▾
+            </button>
+            <div class="add-dropdown" id="addDropdown">
+              <button class="add-opt" id="addBigNodeBtn">
+                <span class="opt-icon big">⬡</span>
+                <div class="opt-text"><span class="opt-label">Ana Ajan Ekle</span><span class="opt-desc">Büyük AI modeli düğümü</span></div>
+              </button>
+              <button class="add-opt" id="addSmallNodeBtn">
+                <span class="opt-icon small">●</span>
+                <div class="opt-text"><span class="opt-label">Alt Ajan Ekle</span><span class="opt-desc">Küçük alt düğüm / yetenek</span></div>
+              </button>
+            </div>
+          </div>
+          <button class="tb-btn danger" id="deleteNodeBtn" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Sil
+          </button>
+          <button class="tb-btn log-btn" id="activityLogBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            İşlemler
+            <span class="log-badge" id="logBadge">0</span>
+          </button>
+        </div>
+      `;
+    </script>
+
+    <!-- ═══ ACTIVITY LOG PANEL ═══ -->
+    <aside class="activity-panel" id="activityPanel">
+        <div class="ap-header">
+            <h3>İŞLEM GEÇMİŞİ</h3>
+            <div class="ap-controls">
+                <button class="ap-filter active" data-filter="all">Tümü</button>
+                <button class="ap-filter" data-filter="status">Durum</button>
+                <button class="ap-filter" data-filter="action">Aksiyon</button>
+                <button class="ap-filter" data-filter="sentinel">Nöbetçi</button>
+            </div>
+            <div class="ap-actions-row">
+                <button class="ap-clear" id="clearLogBtn">Temizle</button>
+                <button class="ap-close-btn" id="closeLogBtn">✕</button>
+            </div>
+        </div>
+        <div class="ap-feed" id="activityFeed">
+            <div class="ap-empty">Henüz kayıt yok</div>
+        </div>
+        <div class="ap-footer">
+            <span class="ap-stat" id="apStatTotal">0 kayıt</span>
+            <span class="ap-stat" id="apStatActive">0 aktif</span>
+        </div>
+    </aside>
+
+    <!-- MAIN CANVAS -->
+    <canvas id="strategyCanvas"></canvas>
+
+    <!-- NODE TOOLTIP -->
+    <div class="node-tooltip" id="nodeTooltip">
+        <div class="tooltip-header" id="tooltipHeader"></div>
+        <div class="tooltip-body" id="tooltipBody"></div>
+    </div>
+
+    <!-- MINI MAP -->
+    <div class="mini-map-container">
+        <canvas id="miniMapCanvas" width="160" height="100"></canvas>
+        <div class="mini-map-label">SYSTEM MAP</div>
+    </div>
+
+    <!-- ═══ NODE CONTEXT MENU (Redesigned) ═══ -->
+    <div class="node-ctx" id="nodeCtxMenu">
+        <div class="ctx-header">
+            <div class="ctx-header-left">
+                <span class="ctx-title" id="ctxTitle">NODE</span>
+                <span class="ctx-rank-badge" id="ctxRankBadge">YÖNETİCİ</span>
+            </div>
+            <button class="ctx-close" id="ctxClose">✕</button>
+        </div>
+
+        <!-- Tab navigation -->
+        <div class="ctx-tabs">
+            <button class="ctx-tab active" data-tab="general">Genel</button>
+            <button class="ctx-tab" data-tab="skills">Yetenekler</button>
+            <button class="ctx-tab" data-tab="advanced">Gelişmiş</button>
+        </div>
+
+        <div class="ctx-body" id="ctxBody">
+
+            <!-- ── TAB: GENEL ── -->
+            <div class="ctx-tab-content active" id="ctxTabGeneral" data-tab="general">
+                <label>İSİM</label>
+                <input type="text" id="ctxLabel" placeholder="Düğüm adı">
+                <label>ALT BAŞLIK</label>
+                <input type="text" id="ctxSub" placeholder="Alt başlık">
+                <label>AJAN SEVİYESİ</label>
+                <div class="ctx-rank-info" id="ctxRankInfo">
+                    <div class="rank-indicator">
+                        <span class="rank-dot" id="ctxRankDot"></span>
+                        <span class="rank-text" id="ctxRankText">Yönetici Ajan</span>
+                    </div>
+                    <span class="rank-desc" id="ctxRankDesc">Alt ajanları yönetir, model çalıştırır</span>
+                </div>
+                <label>DİL MODELİ</label>
+                <select id="ctxModel">
+                    <option value="">— Yok —</option>
+                    <option value="qwen3:8b">Qwen 2.5 14B (Ağır Sıklet Merkez)</option>
+                    <option value="gemma4">Gemma 4 (Kod/Mantık)</option>
+                    <option value="qwen3.5">Qwen 3.5 (Analitik)</option>
+                    <option value="kimi-k2.5:cloud">Kimi K2.5 (Derin Araştırma)</option>
+                    <option value="qwen3.5:cloud">Qwen 3.5 Cloud (Genel)</option>
+                    <option value="glm-5.1:cloud">GLM 5.1 (Strateji)</option>
+                    <option value="minimax-m2.7:cloud">MiniMax (Hızlı)</option>
+                </select>
+                <label>RENK</label>
+                <input type="color" id="ctxColor" value="#00d4ff">
+                <label>TİP</label>
+                <select id="ctxType">
+                    <option value="mesh">Mesh</option>
+                    <option value="particles">Particles</option>
+                    <option value="rings">Rings</option>
+                    <option value="dot">Dot</option>
+                </select>
+            </div>
+
+            <!-- ── TAB: YETENEKLER ── -->
+            <div class="ctx-tab-content" id="ctxTabSkills" data-tab="skills">
+                <label>ATANMIŞ YETENEKLER</label>
+                <div class="ctx-skills-assigned" id="ctxSkillsAssigned">
+                    <!-- JS ile doldurulacak -->
+                    <div class="ctx-skills-empty" id="ctxSkillsEmpty">Henüz yetenek atanmadı</div>
+                </div>
+                <label>YETENEK EKLE</label>
+                <div class="ctx-skill-search-wrap">
+                    <input type="text" id="ctxSkillSearch" placeholder="Yetenek ara...">
+                </div>
+                <div class="ctx-skills-pool" id="ctxSkillsPool">
+                    <!-- JS ile kategori + chip'ler oluşturulacak -->
+                </div>
+            </div>
+
+            <!-- ── TAB: GELİŞMİŞ ── -->
+            <div class="ctx-tab-content" id="ctxTabAdvanced" data-tab="advanced">
+                <label>AJAN YONETIMI</label>
+                <button class="ctx-btn add-child" id="ctxAddBigChild">
+                    <span style="margin-right:6px">⬡</span> Ana Ajan Ekle
+                </button>
+                <button class="ctx-btn add-child" id="ctxAddSmallChild" style="margin-top:6px;">
+                    <span style="margin-right:6px">●</span> Alt Ajan Ekle
+                </button>
+                <div class="ctx-divider" style="margin:14px 0;"></div>
+                <label>TEHLİKELİ İŞLEMLER</label>
+                <button class="ctx-btn disconnect" id="ctxDisconnect">Bağlantıları Kopar</button>
+                <button class="ctx-btn delete" id="ctxDelete" style="margin-top:6px;">Sil</button>
+            </div>
+        </div>
+
+        <div class="ctx-actions">
+            <button class="ctx-btn save" id="ctxSave">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- ═══ ADD NODE MODAL ═══ -->
+    <div class="node-modal-overlay" id="nodeModalOverlay">
+        <div class="node-modal">
+            <h3 id="modalTitle">YENİ DÜĞÜM EKLE</h3>
+            <input type="hidden" id="addNodeMode" value="big">
+            <input type="hidden" id="addNodeParentId" value="core">
+            <label>DÜĞÜM ADI</label>
+            <input type="text" id="newNodeLabel" placeholder="Örn: GPT-4o">
+            <label>ALT BAŞLIK</label>
+            <input type="text" id="newNodeSub" placeholder="Örn: Çeviri Motoru">
+            <label>TİP</label>
+            <select id="newNodeType">
+                <option value="mesh">Mesh (Ağ Kümesi)</option>
+                <option value="particles">Particles (Parçacık)</option>
+                <option value="rings">Rings (Halkalar)</option>
+                <option value="dot">Dot (Basit Nokta)</option>
+            </select>
+            <label>RENK</label>
+            <input type="color" id="newNodeColor" value="#00d4ff">
+            <label>BAĞLI OLDUĞU DÜĞÜM</label>
+            <select id="newNodeParent">
+                <option value="core">ASKER MOTORU (Merkez)</option>
+            </select>
+            <label>DİL MODELİ</label>
+            <select id="newNodeModel">
+                <option value="">— Yok —</option>
+                <option value="qwen3:8b">Qwen 2.5 14B (Ağır Sıklet Merkez)</option>
+                <option value="gemma4">Gemma 4 (Kod/Mantık)</option>
+                <option value="qwen3.5">Qwen 3.5 (Analitik)</option>
+                <option value="kimi-k2.5:cloud">Kimi K2.5 (Derin Araştırma)</option>
+                <option value="qwen3.5:cloud">Qwen 3.5 Cloud (Genel)</option>
+                <option value="glm-5.1:cloud">GLM 5.1 (Strateji)</option>
+                <option value="minimax-m2.7:cloud">MiniMax (Hızlı)</option>
+            </select>
+            <div class="modal-actions">
+                <button class="btn-confirm" id="confirmAddNode">EKLE</button>
+                <button class="btn-cancel" id="cancelAddNode">İPTAL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ CHAT SYSTEM ═══ -->
+    <button class="chat-trigger" id="chatBtn" title="Ajan Sohbet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </button>
+
+    <aside class="chat-panel" id="chatPanel">
+        <div class="chat-panel-header">
+            <div class="chat-panel-title">
+                <h3>AJAN SOHBET</h3>
+                <span class="chat-model-badge" id="chatModelBadge">—</span>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+                <button class="chat-close" id="chatNewChat" title="Yeni Sohbet" style="color:#00c878;border-color:rgba(0,200,120,0.15);">⟳</button>
+                <button class="chat-close" id="chatClose">✕</button>
+            </div>
+        </div>
+
+        <!-- YENİ: Premium Ajan Seçici -->
+        <div class="agent-selector" id="agentSelector">
+            <button class="agent-selector-trigger" id="agentSelectorTrigger">
+                <div class="agent-selector-left">
+                    <div class="agent-selector-dot" id="agentDot"></div>
+                    <div class="agent-selector-info">
+                        <span class="agent-selector-name" id="agentName">ASKER MOTORU</span>
+                        <span class="agent-selector-meta" id="agentMeta">Merkez Komuta AI</span>
+                    </div>
+                </div>
+                <svg class="agent-selector-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="agent-dropdown" id="agentDropdown">
+                <div class="agent-dropdown-search">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="agentSearchInput" placeholder="Ajan ara...">
+                </div>
+                <div class="agent-dropdown-list" id="agentDropdownList">
+                    <!-- JS ile doldurulacak -->
+                </div>
+            </div>
+        </div>
+        <!-- Gizli select (uyumluluk) -->
+        <select id="chatModelSelect" style="display:none;"></select>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-empty" id="chatEmpty">
+                <div class="chat-empty-icon">⬡</div>
+                <div class="chat-empty-text">AJAN İLE SOHBETE BAŞLA</div>
+            </div>
+            <div class="chat-typing" id="chatTyping">
+                <div class="chat-typing-dot"></div>
+                <div class="chat-typing-dot"></div>
+                <div class="chat-typing-dot"></div>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <textarea class="chat-input" id="chatInput" placeholder="Mesaj yaz..." rows="1"></textarea>
+            <button class="chat-send" id="chatSend" title="Gönder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ═══ VOICE CHAT SYSTEM ═══ -->
+    <button class="voice-trigger" id="voiceBtn" title="Sesli Komuta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+    </button>
+
+    <div class="voice-info" id="voiceInfo">
+        <div class="voice-info-status" id="voiceStatus">HAZIR</div>
+        <div class="voice-transcript" id="voiceTranscript"></div>
+    </div>
+
+    <script src="frontend_src/state_manager.ts"></script>
+    <script type="module" src="frontend_src/strategy.ts"></script>
+
+    <!-- ═══ CHAT LOGIC ═══ -->
+    <script>
+    (function() {
+      const chatBtn = document.getElementById('chatBtn');
+      const chatPanel = document.getElementById('chatPanel');
+      const chatClose = document.getElementById('chatClose');
+      const chatNewChat = document.getElementById('chatNewChat');
+      const chatInput = document.getElementById('chatInput');
+      const chatSend = document.getElementById('chatSend');
+      const chatMessages = document.getElementById('chatMessages');
+      const chatEmpty = document.getElementById('chatEmpty');
+      const chatTyping = document.getElementById('chatTyping');
+      const chatModelSelect = document.getElementById('chatModelSelect');
+      const chatModelBadge = document.getElementById('chatModelBadge');
+
+      // Yeni ajan seçici elemanları
+      const agentSelector = document.getElementById('agentSelector');
+      const agentSelectorTrigger = document.getElementById('agentSelectorTrigger');
+      const agentDropdown = document.getElementById('agentDropdown');
+      const agentDropdownList = document.getElementById('agentDropdownList');
+      const agentSearchInput = document.getElementById('agentSearchInput');
+      const agentDot = document.getElementById('agentDot');
+      const agentName = document.getElementById('agentName');
+      const agentMeta = document.getElementById('agentMeta');
+
+      // ── Ajan bazlı sohbet deposu ──
+      const CHAT_PREFIX = 'asker_chat_';
+      let currentAgentId = 'core';
+      let currentMessages = [];
+      let isSending = false;
+
+      // Eski tek-geçmiş key'ini temizle (migration)
+      localStorage.removeItem('asker_motoru_chat_history');
+
+      function getChatKey(agentId) { return CHAT_PREFIX + (agentId || 'core'); }
+
+      function loadAgentChat(agentId) {
+        currentAgentId = agentId;
+        try {
+          const saved = localStorage.getItem(getChatKey(agentId));
+          currentMessages = saved ? JSON.parse(saved) : [];
+        } catch(e) { currentMessages = []; }
+      }
+
+      function saveAgentChat() {
+        try {
+          if (currentMessages.length > 100) currentMessages = currentMessages.slice(-100);
+          localStorage.setItem(getChatKey(currentAgentId), JSON.stringify(currentMessages));
+        } catch(e) {}
+      }
+
+      function timeStr() {
+        const d = new Date();
+        return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+      }
+
+      function getAgentName(agentId) {
+        if (typeof NODES !== 'undefined') {
+          const node = NODES.find(n => n.id === agentId);
+          if (node) return node.label;
+        }
+        return agentId;
+      }
+
+      // ── Ajan bilgilerini al ──
+      function getNodeInfo(nodeId) {
+        if (typeof NODES === 'undefined') return null;
+        return NODES.find(n => n.id === nodeId) || null;
+      }
+
+      function getParentName(parentId) {
+        const parent = getNodeInfo(parentId);
+        return parent ? parent.label : parentId;
+      }
+
+      function getRankLabel(node) {
+        if (node.id === 'core') return 'KOMUTA';
+        if (node.r >= 22) return 'YÖNETİCİ';
+        if (node.r >= 18) return 'SİSTEM';
+        return 'İŞÇİ';
+      }
+
+      function getRankClass(node) {
+        if (node.id === 'core') return 'rank-komuta';
+        if (node.r >= 22) return 'rank-yonetici';
+        if (node.r >= 18) return 'rank-sistem';
+        return 'rank-isci';
+      }
+
+      // ── Premium ajan listesini oluştur ──
+      function buildAgentList(filter) {
+        if (typeof NODES === 'undefined') return;
+        agentDropdownList.innerHTML = '';
+        const q = (filter || '').toLowerCase();
+
+        // Grupla: Komuta → Yöneticiler (+ alt ajanları) → Sistemler
+        const core = NODES.find(n => n.id === 'core');
+        const managers = NODES.filter(n => n.parent === 'core' && n.r >= 22 && n.model);
+        const systems = NODES.filter(n => n.parent === 'core' && n.r >= 18 && !n.model);
+
+        function matchesFilter(node) {
+          if (!q) return true;
+          return (node.label || '').toLowerCase().includes(q)
+              || (node.sub || '').toLowerCase().includes(q)
+              || (node.model || '').toLowerCase().includes(q);
+        }
+
+        function createAgentItem(node, isChild, parentLabel) {
+          const item = document.createElement('button');
+          item.className = 'agent-item' + (isChild ? ' agent-item-child' : '') + (node.id === currentAgentId ? ' selected' : '');
+          const rank = getRankLabel(node);
+          const rankCls = getRankClass(node);
+          const modelTag = node.model ? `<span class="agent-item-model">${node.model}</span>` : '';
+          const parentTag = isChild && parentLabel ? `<span class="agent-item-parent">↳ ${parentLabel}</span>` : '';
+
+          item.innerHTML = `
+            <div class="agent-item-dot" style="background:${node.color};box-shadow:0 0 8px ${node.color}44"></div>
+            <div class="agent-item-info">
+              <div class="agent-item-top">
+                <span class="agent-item-name">${node.label}</span>
+                <span class="agent-item-rank ${rankCls}">${rank}</span>
+              </div>
+              <div class="agent-item-bottom">
+                ${node.sub ? `<span class="agent-item-sub">${node.sub}</span>` : ''}
+                ${modelTag}
+                ${parentTag}
+              </div>
+            </div>
+          `;
+
+          item.addEventListener('click', () => {
+            selectAgent(node.id);
+            closeAgentDropdown();
+          });
+          return item;
+        }
+
+        // Komuta
+        if (core && matchesFilter(core)) {
+          const header = document.createElement('div');
+          header.className = 'agent-group-header';
+          header.textContent = 'KOMUTA BİRİMİ';
+          agentDropdownList.appendChild(header);
+          agentDropdownList.appendChild(createAgentItem(core, false));
+        }
+
+        // Yöneticiler + Alt ajanlar
+        let hasManager = false;
+        managers.forEach(mgr => {
+          const children = NODES.filter(n => n.parent === mgr.id);
+          const mgrMatch = matchesFilter(mgr);
+          const childMatch = children.some(c => matchesFilter(c));
+          if (!mgrMatch && !childMatch) return;
+
+          if (!hasManager) {
+            const header = document.createElement('div');
+            header.className = 'agent-group-header';
+            header.textContent = 'YÖNETİCİ AJANLAR';
+            agentDropdownList.appendChild(header);
+            hasManager = true;
+          }
+
+          if (mgrMatch) {
+            agentDropdownList.appendChild(createAgentItem(mgr, false));
+          }
+
+          // İşçi ajanlar
+          children.forEach(child => {
+            if (matchesFilter(child) || (mgrMatch && !q)) {
+              agentDropdownList.appendChild(createAgentItem(child, true, mgr.label));
+            }
+          });
+        });
+
+        // Sistem modülleri
+        let hasSys = false;
+        systems.forEach(sys => {
+          const children = NODES.filter(n => n.parent === sys.id);
+          const sysMatch = matchesFilter(sys);
+          const childMatch = children.some(c => matchesFilter(c));
+          if (!sysMatch && !childMatch) return;
+
+          if (!hasSys) {
+            const header = document.createElement('div');
+            header.className = 'agent-group-header';
+            header.textContent = 'SİSTEM MODÜLLERİ';
+            agentDropdownList.appendChild(header);
+            hasSys = true;
+          }
+
+          if (sysMatch) {
+            agentDropdownList.appendChild(createAgentItem(sys, false));
+          }
+
+          children.forEach(child => {
+            if (matchesFilter(child) || (sysMatch && !q)) {
+              agentDropdownList.appendChild(createAgentItem(child, true, sys.label));
+            }
+          });
+        });
+
+        // Sonuç yok mesajı
+        if (agentDropdownList.children.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'agent-dropdown-empty';
+          empty.textContent = 'Sonuç bulunamadı';
+          agentDropdownList.appendChild(empty);
+        }
+      }
+
+      // ── Ajan seç ──
+      function selectAgent(agentId) {
+        const node = getNodeInfo(agentId);
+        if (!node) return;
+
+        // Trigger UI güncelle
+        agentDot.style.background = node.color;
+        agentDot.style.boxShadow = `0 0 10px ${node.color}66`;
+        agentName.textContent = node.label;
+
+        const rank = getRankLabel(node);
+        let metaText = rank;
+        if (node.sub) metaText += ' · ' + node.sub;
+        if (node.parent && node.parent !== 'core') {
+          metaText += ' · ↳ ' + getParentName(node.parent);
+        }
+        agentMeta.textContent = metaText;
+
+        // Badge güncelle
+        chatModelBadge.textContent = node.label;
+
+        // Gizli select uyumluluğu
+        chatModelSelect.value = agentId;
+
+        // Chat geçişi
+        loadAgentChat(agentId);
+        renderMessages();
+      }
+
+      // ── Dropdown aç/kapa ──
+      function openAgentDropdown() {
+        agentSelector.classList.add('open');
+        agentSearchInput.value = '';
+        buildAgentList('');
+        setTimeout(() => agentSearchInput.focus(), 50);
+      }
+
+      function closeAgentDropdown() {
+        agentSelector.classList.remove('open');
+      }
+
+      agentSelectorTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (agentSelector.classList.contains('open')) {
+          closeAgentDropdown();
+        } else {
+          openAgentDropdown();
+        }
+      });
+
+      // Arama
+      agentSearchInput.addEventListener('input', () => {
+        buildAgentList(agentSearchInput.value);
+      });
+
+      // Dışa tıklayınca kapat
+      document.addEventListener('click', (e) => {
+        if (!agentSelector.contains(e.target)) {
+          closeAgentDropdown();
+        }
+      });
+
+      // ESC ile kapat
+      agentSearchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAgentDropdown();
+      });
+
+      // ── Eski populate fonksiyonu (uyumluluk) ──
+      function populateAgentSelect() {
+        const prevVal = chatModelSelect.value;
+        chatModelSelect.innerHTML = '';
+        if (typeof NODES === 'undefined') return;
+
+        NODES.filter(n => n.model || n.r >= 18 || n.id === 'core').forEach(agent => {
+          const opt = document.createElement('option');
+          opt.value = agent.id;
+          opt.textContent = agent.label;
+          chatModelSelect.appendChild(opt);
+        });
+
+        if (prevVal && [...chatModelSelect.options].some(o => o.value === prevVal)) {
+          chatModelSelect.value = prevVal;
+        }
+      }
+
+      function getSelectedModel() {
+        const agentId = currentAgentId || 'core';
+        if (typeof NODES !== 'undefined') {
+          const node = NODES.find(n => n.id === agentId);
+          if (node && node.model) return node.model;
+          // İşçi ajan ise parent'ın modelini kullan
+          if (node && node.parent) {
+            const parent = NODES.find(n => n.id === node.parent);
+            if (parent && parent.model) return parent.model;
+          }
+        }
+        return 'qwen3:8b';
+      }
+
+      // ── Mesajları render et ──
+      function renderMessages() {
+        const existing = chatMessages.querySelectorAll('.chat-msg');
+        existing.forEach(el => el.remove());
+
+        if (currentMessages.length === 0) {
+          chatEmpty.style.display = 'flex';
+          return;
+        }
+        chatEmpty.style.display = 'none';
+
+        currentMessages.forEach(msg => {
+          const div = document.createElement('div');
+          div.className = 'chat-msg ' + (msg.role === 'user' ? 'user' : 'agent');
+          const senderName = msg.role === 'user' ? 'SEN' : getAgentName(currentAgentId);
+          const bubbleContent = msg.role === 'user' ? escapeHtml(msg.content) : msg.content;
+          div.innerHTML = `
+            <div class="chat-msg-sender">${senderName}</div>
+            <div class="chat-msg-bubble">${bubbleContent}</div>
+            <div class="chat-msg-time">${msg.time || ''}</div>
+          `;
+          // Bubble içindeki tüm linklere target=_blank ekle
+          div.querySelectorAll('.chat-msg-bubble a').forEach(a => {
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+          });
+          chatMessages.insertBefore(div, chatTyping);
+        });
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function escapeHtml(text) {
+        const d = document.createElement('div');
+        d.textContent = text;
+        return d.innerHTML;
+      }
+
+      // ── Ajan değişince sohbet değiş ──
+      function switchAgent() {
+        const agentId = currentAgentId || 'core';
+        loadAgentChat(agentId);
+        renderMessages();
+      }
+
+      // ── Panel aç/kapa ──
+      chatBtn.addEventListener('click', () => {
+        const isOpen = chatPanel.classList.toggle('open');
+        chatBtn.classList.toggle('active', isOpen);
+        if (isOpen) {
+          populateAgentSelect();
+          selectAgent(currentAgentId);
+          switchAgent();
+          setTimeout(() => chatInput.focus(), 350);
+        }
+      });
+
+      chatClose.addEventListener('click', () => {
+        chatPanel.classList.remove('open');
+        chatBtn.classList.remove('active');
+      });
+
+      // ── Yeni Sohbet ──
+      chatNewChat.addEventListener('click', () => {
+        if (currentMessages.length === 0) return;
+        if (!confirm('Bu ajanın sohbet geçmişi silinecek. Emin misin?')) return;
+        currentMessages = [];
+        saveAgentChat();
+        renderMessages();
+        chatInput.focus();
+      });
+
+      // ── Mesaj gönder (SSE Streaming) ──
+      async function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text || isSending) return;
+
+        isSending = true;
+        chatSend.disabled = true;
+        const model = getSelectedModel();
+
+        // Kullanıcı mesajı
+        currentMessages.push({ role: 'user', content: text, time: timeStr() });
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        renderMessages();
+        saveAgentChat();
+
+        // Boş asistan mesajı oluştur (streaming için)
+        currentMessages.push({ role: 'assistant', content: '', time: timeStr() });
+        renderMessages();
+
+        // Typing göster
+        chatTyping.classList.add('visible');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Streaming bubble referansı
+        const allBubbles = chatMessages.querySelectorAll('.chat-msg.agent .chat-msg-bubble');
+        const streamBubble = allBubbles[allBubbles.length - 1];
+
+        try {
+          const response = await fetch('/api/sohbet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: text, model: model, agent_id: currentAgentId })
+          });
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          let fullContent = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop(); // Son eksik satırı sakla
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+                if (data === '[DONE]') continue;
+                try {
+                  const parsed = JSON.parse(data);
+                  if (parsed.content) {
+                    fullContent += parsed.content;
+                    if (streamBubble) {
+                      streamBubble.innerHTML = fullContent;
+                      // Linklere target=_blank ekle
+                      streamBubble.querySelectorAll('a').forEach(a => {
+                        a.setAttribute('target', '_blank');
+                        a.setAttribute('rel', 'noopener noreferrer');
+                      });
+                    }
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                  }
+                } catch(pe) {}
+              }
+            }
+          }
+
+          // Son mesajı güncelle
+          currentMessages[currentMessages.length - 1].content = fullContent;
+          saveAgentChat();
+        } catch(err) {
+          currentMessages[currentMessages.length - 1].content = 'Bağlantı hatası: ' + err.message;
+        }
+
+        chatTyping.classList.remove('visible');
+        renderMessages();
+        isSending = false;
+        chatSend.disabled = false;
+        chatInput.focus();
+      }
+
+      chatSend.addEventListener('click', sendMessage);
+      chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // Textarea auto-resize
+      chatInput.addEventListener('input', () => {
+        chatInput.style.height = 'auto';
+        chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
+      });
+
+      // Sayfa yüklendiğinde
+      populateAgentSelect();
+      selectAgent('core');
+      switchAgent();
+
+      // Chat içi linkleri varsayılan tarayıcıda aç (Electron + Browser uyumlu)
+      chatMessages.addEventListener('click', (e) => {
+        const link = e.target.closest('a[href]');
+        if (link && link.href && link.href.startsWith('http')) {
+          e.preventDefault();
+          e.stopPropagation();
+          // Electron ortamında shell.openExternal kullan
+          try {
+            const { shell } = require('electron');
+            shell.openExternal(link.href);
+          } catch(err) {
+            // Tarayıcıda çalışıyorsa normal aç
+            window.open(link.href, '_blank');
+          }
+        }
+      });
+    })();
+    </script>
+</body>
+</html>

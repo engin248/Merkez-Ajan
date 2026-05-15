@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASKER MOTORU // KOMUTA MERKEZİ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e18;
+            --surface: rgba(14, 20, 32, 0.92);
+            --surface2: rgba(20, 28, 42, 0.8);
+            --border: rgba(255,255,255,0.06);
+            --border2: rgba(255,255,255,0.1);
+            --cyan: #00d4ff;
+            --red: #ff4444;
+            --green: #00ff88;
+            --purple: #b800ff;
+            --orange: #ff9800;
+            --text: #e0e8f0;
+            --muted: rgba(200, 220, 240, 0.4);
+            --font-ui: 'Inter', 'JetBrains Mono', sans-serif;
+            --font-hud: 'Orbitron', monospace;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-ui);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Topbar (shared with strategy) ── */
+        .topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 12px; height: 48px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            flex-shrink: 0;
+            overflow: hidden;
+            gap: 8px;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .topbar-logo {
+            display: flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; color: var(--cyan);
+            border-radius: 8px; background: rgba(0,212,255,0.08);
+            transition: background 0.2s; cursor: pointer;
+        }
+        .topbar-logo:hover { background: rgba(0,212,255,0.14); }
+        .topbar-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.08); }
+        .workflow-name { font-size: 13px; font-weight: 600; letter-spacing: 0.3px; }
+        .workflow-badge {
+            font-size: 10px; font-weight: 500; color: var(--green);
+            background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.15);
+            padding: 2px 8px; border-radius: 10px; letter-spacing: 0.5px;
+        }
+
+        .topbar-center { display: flex; align-items: center; gap: 1px; background: rgba(255,255,255,0.03); border-radius: 10px; padding: 3px; flex-shrink: 1; min-width: 0; }
+        .topbar-tab {
+            display: flex; align-items: center; gap: 5px;
+            font-family: var(--font-ui); font-size: 11px; font-weight: 500;
+            color: rgba(200,220,240,0.4); padding: 6px 10px; border-radius: 8px;
+            text-decoration: none; transition: all 0.2s; white-space: nowrap;
+        }
+        .topbar-tab svg { opacity: 0.5; transition: opacity 0.2s; }
+        .topbar-tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+        .topbar-tab:hover svg { opacity: 0.8; }
+        .topbar-tab.active { color: var(--text); background: rgba(255,255,255,0.07); }
+        .topbar-tab.active svg { opacity: 1; color: var(--cyan); }
+
+        .topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .topbar-stats { display: flex; align-items: center; gap: 8px; }
+        .stat-chip {
+            display: flex; align-items: center; gap: 5px;
+            font-family: var(--font-mono); font-size: 11px;
+            color: rgba(200,220,240,0.35); padding: 4px 10px;
+            border-radius: 6px; background: rgba(255,255,255,0.03);
+        }
+        .stat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .tb-btn {
+            display: flex; align-items: center; gap: 5px;
+            font-family: var(--font-ui); font-size: 11px; font-weight: 500;
+            padding: 5px 10px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04);
+            color: var(--text); cursor: pointer; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+        }
+        .tb-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--border2); }
+        .tb-btn.primary { background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.2); color: var(--cyan); }
+        .tb-btn.primary:hover { background: rgba(0,212,255,0.18); border-color: rgba(0,212,255,0.35); }
+        .tb-btn.komuta { background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.15); color: var(--cyan); }
+        .tb-btn.komuta:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.3); }
+        .topbar-workflow { display: flex; align-items: center; gap: 8px; }
+
+        /* ── Main Layout ── */
+        .main-layout {
+            flex: 1; display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 0; min-height: 0;
+        }
+
+        /* ── Side Panels ── */
+        .side-panel {
+            display: flex; flex-direction: column;
+            border-right: 1px solid var(--border);
+            background: var(--surface);
+        }
+        .side-panel:last-child { border-right: none; border-left: 1px solid var(--border); }
+        .panel-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 16px; border-bottom: 1px solid var(--border);
+        }
+        .panel-avatar {
+            width: 28px; height: 28px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+        }
+        .panel-avatar.anti { background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(0,80,255,0.2)); color: var(--cyan); }
+        .panel-avatar.gpt { background: linear-gradient(135deg, rgba(16,163,127,0.2), rgba(0,80,80,0.2)); color: #10a37f; }
+        .panel-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; color: var(--muted); }
+        .panel-subtitle { font-size: 10px; color: rgba(200,220,240,0.25); margin-top: 1px; }
+        .panel-chat {
+            flex: 1; overflow-y: auto; padding: 16px;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .panel-chat::-webkit-scrollbar { width: 3px; }
+        .panel-chat::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.2); border-radius: 4px; }
+
+        /* ── Center Panel ── */
+        .center-panel {
+            display: flex; flex-direction: column;
+            background: rgba(8, 12, 22, 0.6);
+            min-height: 0;
+        }
+        .center-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 20px; border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+        .center-title {
+            font-family: var(--font-hud); font-size: 12px;
+            font-weight: 600; letter-spacing: 2px; color: var(--text);
+        }
+        .model-selector {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .model-select {
+            background: rgba(0,10,20,0.8); color: var(--cyan);
+            border: 1px solid rgba(0,212,255,0.15); padding: 6px 12px;
+            border-radius: 8px; font-family: var(--font-mono);
+            font-size: 11px; outline: none; cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .model-select:focus { border-color: var(--cyan); }
+        .model-select option { background: #0a0e18; }
+
+        /* ── Chat Messages ── */
+        .chat-area {
+            flex: 1; overflow-y: auto; padding: 20px 24px;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .chat-area::-webkit-scrollbar { width: 4px; }
+        .chat-area::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.15); border-radius: 4px; }
+
+        .msg {
+            max-width: 75%; padding: 12px 16px;
+            border-radius: 12px; font-size: 13px;
+            line-height: 1.6; animation: msgIn 0.3s ease;
+        }
+        .msg.system {
+            max-width: 100%; text-align: center;
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed rgba(255,255,255,0.06);
+            color: var(--muted); font-size: 11px;
+            border-radius: 8px; padding: 10px;
+        }
+        .msg.user {
+            align-self: flex-end;
+            background: rgba(0,212,255,0.08);
+            border: 1px solid rgba(0,212,255,0.12);
+            color: var(--text);
+            border-bottom-right-radius: 4px;
+        }
+        .msg.ai {
+            align-self: flex-start;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(220,230,240,0.85);
+            border-bottom-left-radius: 4px;
+        }
+        .msg.anti-msg {
+            background: rgba(0,212,255,0.06); border-left: 3px solid var(--cyan);
+            font-size: 12px; color: rgba(200,220,240,0.7);
+        }
+        .msg.gpt-msg {
+            background: rgba(16,163,127,0.06); border-left: 3px solid #10a37f;
+            font-size: 12px; color: rgba(200,220,240,0.7);
+        }
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg-time {
+            font-size: 9px; color: rgba(200,220,240,0.2);
+            margin-top: 4px;
+        }
+
+        /* ── Input Area ── */
+        .input-area {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            display: flex; gap: 8px; align-items: center;
+        }
+        .chat-input {
+            flex: 1; background: rgba(0,10,20,0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text); padding: 10px 16px;
+            border-radius: 10px; font-family: var(--font-ui);
+            font-size: 13px; outline: none;
+            transition: border-color 0.2s;
+        }
+        .chat-input:focus { border-color: rgba(0,212,255,0.3); }
+        .chat-input::placeholder { color: rgba(200,220,240,0.2); }
+
+        .send-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 6px; padding: 10px 20px;
+            background: rgba(0,212,255,0.12);
+            border: 1px solid rgba(0,212,255,0.2);
+            color: var(--cyan); border-radius: 10px;
+            font-family: var(--font-ui); font-size: 12px;
+            font-weight: 600; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .send-btn:hover {
+            background: rgba(0,212,255,0.2);
+            border-color: rgba(0,212,255,0.4);
+            box-shadow: 0 0 16px rgba(0,212,255,0.1);
+        }
+        .voice-btn {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--muted); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .voice-btn:hover { color: var(--green); border-color: rgba(0,255,136,0.2); background: rgba(0,255,136,0.05); }
+        .voice-btn.listening {
+            color: var(--green); border-color: rgba(0,255,136,0.3);
+            background: rgba(0,255,136,0.08);
+            animation: voicePulse 1.5s ease-in-out infinite;
+        }
+        @keyframes voicePulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.2); }
+            50% { box-shadow: 0 0 0 8px rgba(0,255,136,0); }
+        }
+
+        /* ── Scanline ── */
+        .scanline {
+            position: fixed; inset: 0; z-index: 999; pointer-events: none;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,20,30,0.03) 2px, rgba(0,20,30,0.03) 4px);
+        }
+        /* ── Clock ── */
+        .clock {
+            font-family: var(--font-mono); font-size: 11px;
+            color: rgba(200,220,240,0.3); letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+
+    <!-- ═══ TOPBAR ═══ -->
+    <header class="topbar" id="mainTopbar"></header>
+    <script src="frontend_src/shared_header.ts"></script>
+    <script>
+      const slot = document.getElementById('headerRightSlot');
+      if (slot) slot.innerHTML = `
+        <div class="topbar-stats">
+          <span class="stat-chip"><span class="stat-dot"></span> Bağlı</span>
+          <span class="clock" id="digital-clock">00:00:00</span>
+        </div>
+      `;
+    </script>
+
+    <!-- ═══ MAIN LAYOUT ═══ -->
+    <div class="main-layout">
+        <!-- LEFT: ANTI Panel -->
+        <div class="side-panel">
+            <div class="panel-header">
+                <div class="panel-avatar anti">⬡</div>
+                <div>
+                    <div class="panel-title">ANTI (CORE)</div>
+                    <div class="panel-subtitle">Bilişsel Çekirdek</div>
+                </div>
+            </div>
+            <div class="panel-chat" id="chat-anti">
+                <div class="msg system">Bilişsel çekirdek hazır. Komutan bekleniyor...</div>
+            </div>
+        </div>
+
+        <!-- CENTER: Command Area -->
+        <div class="center-panel">
+            <div class="center-header">
+                <div class="center-title">KOMUTA MERKEZİ</div>
+                <div class="model-selector">
+                    <select class="model-select" id="komutaModelSelector">
+                        <option value="qwen3:8b">Qwen 3 (Merkez)</option>
+                        <option value="gemma4">Gemma 4 (Kod/Mantık)</option>
+                        <option value="qwen3.5">Qwen 3.5 (Analitik)</option>
+                        <option value="kimi-k2.5:cloud">Kimi k2.5 (Derin Araştırma)</option>
+                        <option value="qwen3.5:cloud">Qwen 3.5 Cloud (Genel)</option>
+                        <option value="glm-5.1:cloud">GLM 5.1 (Strateji)</option>
+                        <option value="minimax-m2.7:cloud">MiniMax (Hızlı)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chat-area" id="chat-komutan">
+                <div class="msg system">Komuta Merkezi aktif. Model seçin ve emrinizi girin.</div>
+            </div>
+            <div class="input-area">
+                <input type="text" class="chat-input" id="cmd-input" placeholder="Emrinizi girin..." autocomplete="off">
+                <button class="send-btn" id="send-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Gönder
+                </button>
+                <button class="voice-btn" id="voice-btn" title="Sesli Komut">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="23"/>
+                        <line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT: ChatGPT Panel -->
+        <div class="side-panel">
+            <div class="panel-header">
+                <div class="panel-avatar gpt">◈</div>
+                <div>
+                    <div class="panel-title">ADVISOR</div>
+                    <div class="panel-subtitle">Yüksek İstişare</div>
+                </div>
+            </div>
+            <div class="panel-chat" id="chat-chatgpt">
+                <div class="msg system">Yüksek istişare katmanı beklemede.</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="frontend_src/state_manager.ts"></script>
+    <script src="frontend_src/script.ts"></script>
+</body>
+</html>

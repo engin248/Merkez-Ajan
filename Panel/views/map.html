@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRONOS — Dünya Haritası</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="strategy.css">
+    <style>
+        body { margin: 0; overflow: hidden; background: #000508; }
+        #globeContainer {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh; z-index: 1;
+        }
+        .globe-hud {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%); z-index: 20;
+            display: flex; gap: 8px; align-items: center;
+            padding: 8px 16px; border-radius: 12px;
+            background: rgba(8,12,24,0.85);
+            border: 1px solid rgba(0,212,255,0.1);
+            backdrop-filter: blur(12px);
+        }
+        .globe-hud span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; color: rgba(255,255,255,0.4);
+        }
+        .globe-hud .val { color: #00d4ff; font-weight: 600; }
+        .globe-hud .sep { width: 1px; height: 14px; background: rgba(255,255,255,0.08); }
+        .pause-btn {
+            background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.15);
+            color: #00d4ff; padding: 4px 10px; border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 4px;
+        }
+        .pause-btn:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.3); }
+        .pause-btn.paused { color: #ff9800; border-color: rgba(255,152,0,0.2); background: rgba(255,152,0,0.08); }
+        .pause-btn .key { font-size: 8px; opacity: 0.5; }
+        /* Country detail panel */
+        .country-panel {
+            position: fixed; top: 56px; right: 0; z-index: 30;
+            width: 340px; height: calc(100vh - 56px);
+            background: rgba(6,10,20,0.92);
+            border-left: 1px solid rgba(0,212,255,0.1);
+            backdrop-filter: blur(20px);
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            display: flex; flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            overflow-y: auto;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .country-panel::-webkit-scrollbar { display: none; }
+        .country-panel.open { transform: translateX(0); }
+        .country-panel .cp-header {
+            padding: 20px 22px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: flex-start; justify-content: space-between;
+        }
+        .country-panel .cp-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 16px; font-weight: 700;
+            color: #fff; letter-spacing: 1.5px;
+        }
+        .country-panel .cp-iso {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; color: rgba(0,212,255,0.7);
+            margin-top: 4px; letter-spacing: 2px;
+        }
+        .country-panel .cp-close {
+            width: 28px; height: 28px; border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.4); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; transition: all 0.15s;
+        }
+        .country-panel .cp-close:hover { background: rgba(255,80,80,0.15); color: #ff5050; border-color: rgba(255,80,80,0.2); }
+        .country-panel .cp-body { padding: 18px 22px; flex: 1; }
+        .country-panel .cp-section {
+            margin-bottom: 20px;
+        }
+        .country-panel .cp-section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px; color: rgba(0,212,255,0.5);
+            letter-spacing: 2.5px; text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .country-panel .cp-stat {
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 8px 12px;
+            border-radius: 8px; margin-bottom: 6px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .country-panel .cp-stat-label {
+            font-size: 12px; color: rgba(255,255,255,0.45);
+        }
+        .country-panel .cp-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px; font-weight: 600; color: #fff;
+        }
+        .country-panel .cp-color-bar {
+            width: 100%; height: 4px; border-radius: 2px;
+            margin-top: 6px; opacity: 0.7;
+        }
+        .country-panel .cp-actions {
+            padding: 16px 22px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .country-panel .cp-btn {
+            width: 100%; padding: 10px 0; border-radius: 8px;
+            border: 1px solid rgba(0,212,255,0.15);
+            background: rgba(0,212,255,0.06);
+            color: #00d4ff; font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.15s;
+            text-align: center;
+        }
+        .country-panel .cp-btn:hover { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.3); }
+        .scene-tooltip { pointer-events: none !important; }
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 100; display: flex; align-items: center; justify-content: center;
+            flex-direction: column; background: #000;
+            transition: opacity 0.8s ease;
+        }
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        .loading-spinner {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: 2px solid rgba(0,212,255,0.1);
+            border-top-color: #00d4ff;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        .loading-text {
+            font-family: 'Orbitron'; font-size: 12px;
+            color: rgba(0,212,255,0.6); letter-spacing: 3px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Hover tooltip styling */
+        .globe-tooltip {
+            background: rgba(8,12,24,0.92) !important;
+            border: 1px solid rgba(0,212,255,0.2) !important;
+            border-radius: 8px !important;
+            padding: 8px 14px !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 12px !important;
+            color: #fff !important;
+            backdrop-filter: blur(8px) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+        }
+        .scene-tooltip { pointer-events: none !important; }
+
+        /* ── Left Command Toolbar ── */
+        .cmd-toolbar {
+            position: fixed; top: 50%; left: 16px; z-index: 25;
+            transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .cmd-btn {
+            width: 44px; height: 44px; border-radius: 10px;
+            background: rgba(6,10,20,0.85);
+            border: 1px solid rgba(255,255,255,0.06);
+            backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s;
+            position: relative; color: rgba(255,255,255,0.4);
+        }
+        .cmd-btn:hover {
+            background: rgba(0,212,255,0.1);
+            border-color: rgba(0,212,255,0.25);
+            color: #00d4ff;
+            transform: scale(1.08);
+        }
+        .cmd-btn.active {
+            background: rgba(0,212,255,0.12);
+            border-color: rgba(0,212,255,0.3);
+            color: #00d4ff;
+            box-shadow: 0 0 12px rgba(0,212,255,0.15);
+        }
+        .cmd-btn svg { width: 20px; height: 20px; }
+        .cmd-btn .cmd-tip {
+            position: absolute; left: 54px; top: 50%; transform: translateY(-50%);
+            background: rgba(6,10,20,0.95); border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 6px; padding: 5px 10px; white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            color: #00d4ff; letter-spacing: 0.5px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.15s, transform 0.15s;
+            transform: translateY(-50%) translateX(-4px);
+        }
+        .cmd-btn:hover .cmd-tip {
+            opacity: 1; transform: translateY(-50%) translateX(0);
+        }
+        .cmd-sep {
+            width: 28px; height: 1px; margin: 4px auto;
+            background: rgba(255,255,255,0.06);
+        }
+    </style>
+</head>
+<body>
+    <!-- ═══ TOP BAR ═══ -->
+    <header class="topbar" id="mainTopbar"></header>
+    <script src="frontend_src/shared_header.ts"></script>
+    <script>
+      const slot = document.getElementById('headerRightSlot');
+      if (slot) slot.innerHTML = `
+        <span style="font-family:'JetBrains Mono';font-size:10px;color:rgba(255,255,255,0.35);" id="coordStatus">
+          LAT: 0.00° LON: 0.00°
+        </span>
+      `;
+    </script>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">DÜNYA YÜKLENİYOR</div>
+    </div>
+
+    <div id="globeContainer"></div>
+
+    <!-- HUD -->
+    <div class="globe-hud">
+        <button class="pause-btn" id="pauseBtn" title="Space tuşu ile durdur/başlat">
+            <span id="pauseIcon">❚❚</span>
+            <span id="pauseText">Durdur</span>
+            <span class="key">[SPACE]</span>
+        </button>
+        <div class="sep"></div>
+        <span>ZOOM: <span class="val" id="zoomVal">1.0x</span></span>
+        <div class="sep"></div>
+        <span>ROT: <span class="val" id="rotVal">0.0°</span></span>
+        <div class="sep"></div>
+        <span>TILT: <span class="val" id="tiltVal">0.0°</span></span>
+    </div>
+
+    <!-- Left Command Toolbar -->
+    <div class="cmd-toolbar">
+        <button class="cmd-btn" id="cmdPin" title="İğne Ekle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span class="cmd-tip">İĞNE EKLE</span>
+        </button>
+        <button class="cmd-btn" id="cmdAgent" title="Ajan Yönlendir">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
+            </svg>
+            <span class="cmd-tip">AJAN YÖNLENDİR</span>
+        </button>
+        <button class="cmd-btn" id="cmdPlan" title="Plan Oluştur">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/>
+                <polyline points="2 12 12 17 22 12"/>
+            </svg>
+            <span class="cmd-tip">PLAN OLUŞTUR</span>
+        </button>
+        <div class="cmd-sep"></div>
+        <button class="cmd-btn" id="cmdRules" title="Kural Belirle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span class="cmd-tip">KURAL BELİRLE</span>
+        </button>
+        <button class="cmd-btn" id="cmdFeed" title="Veri Akışı">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 11a9 9 0 019 9"/><path d="M4 4a16 16 0 0116 16"/>
+                <circle cx="5" cy="19" r="1"/>
+            </svg>
+            <span class="cmd-tip">VERİ AKIŞI</span>
+        </button>
+        <button class="cmd-btn" id="cmdMeasure" title="Mesafe Ölç">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 12h20"/><path d="M6 8v8"/><path d="M18 8v8"/>
+                <path d="M10 10v4"/><path d="M14 10v4"/>
+            </svg>
+            <span class="cmd-tip">MESAFE ÖLÇ</span>
+        </button>
+    </div>
+
+    <!-- Country Intel Panel -->
+    <div class="country-panel" id="countryPanel">
+        <div class="cp-header">
+            <div>
+                <div class="cp-name" id="cpName">—</div>
+                <div class="cp-iso" id="cpIso">—</div>
+            </div>
+            <button class="cp-close" id="cpClose">✕</button>
+        </div>
+        <div class="cp-body">
+            <!-- Threat Assessment -->
+            <div class="cp-section">
+                <div class="cp-section-title">◉ tehdit değerlendirmesi</div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Tehdit Seviyesi</span>
+                    <span class="cp-stat-value" id="cpThreat" style="font-weight:700">—</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Stabilite İndeksi</span>
+                    <span class="cp-stat-value" id="cpStability">—</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Risk Skoru</span>
+                    <span class="cp-stat-value" id="cpRisk">—</span>
+                </div>
+                <div class="cp-color-bar" id="cpColorBar"></div>
+            </div>
+
+            <!-- Agent Deployment -->
+            <div class="cp-section">
+                <div class="cp-section-title">◉ ajan dağılımı</div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Aktif Ajanlar</span>
+                    <span class="cp-stat-value" id="cpAgents">—</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Atanan Model</span>
+                    <span class="cp-stat-value" id="cpModel">—</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Görev Durumu</span>
+                    <span class="cp-stat-value" id="cpTaskStatus">—</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Son Tarama</span>
+                    <span class="cp-stat-value" id="cpLastScan">—</span>
+                </div>
+            </div>
+
+            <!-- Data Coverage -->
+            <div class="cp-section">
+                <div class="cp-section-title">◉ veri kapsama</div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">İstihbarat Beslemesi</span>
+                    <span class="cp-stat-value" id="cpFeed">—</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Veri Noktası</span>
+                    <span class="cp-stat-value" id="cpDataPoints">—</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Bant Genişliği</span>
+                    <span class="cp-stat-value" id="cpBandwidth">—</span>
+                </div>
+            </div>
+
+            <!-- Strategic Value -->
+            <div class="cp-section">
+                <div class="cp-section-title">◉ stratejik değer</div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Nüfus</span>
+                    <span class="cp-stat-value" id="cpPop">—</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Ekonomik Güç</span>
+                    <span class="cp-stat-value" id="cpGdp">—</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat-label">Öncelik Sınıfı</span>
+                    <span class="cp-stat-value" id="cpPriority">—</span>
+                </div>
+            </div>
+        </div>
+        <div class="cp-actions">
+            <button class="cp-btn" id="cpFocusBtn">⊕ ODAKLAN</button>
+        </div>
+    </div>
+
+    <!-- Globe.gl -->
+    <script src="frontend_src/state_manager.ts"></script>
+    <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
+    <script>
+    // ═══════════════════════════════════════════════════════════
+    // KRONOS GLOBE — Political World Globe (Toy Globe Style)
+    // ═══════════════════════════════════════════════════════════
+
+    const GEOJSON_URL = 'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson';
+
+    // Deterministic hash for consistent per-country values
+    function hashStr(str) {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) {
+            h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+        }
+        return Math.abs(h);
+    }
+
+    // ── Realistic toy-globe color palette (vivid but not cartoonish) ──
+    const PALETTE = [
+        'rgba(255,182,193,0.75)','rgba(255,218,120,0.75)','rgba(144,238,144,0.75)',
+        'rgba(135,206,235,0.75)','rgba(255,165,80,0.75)','rgba(200,162,255,0.75)',
+        'rgba(255,160,200,0.75)','rgba(255,200,140,0.75)','rgba(100,220,180,0.75)',
+        'rgba(250,240,140,0.75)','rgba(240,128,128,0.75)','rgba(100,200,255,0.75)',
+        'rgba(120,220,120,0.75)','rgba(230,120,120,0.75)','rgba(180,130,220,0.75)',
+        'rgba(240,200,80,0.75)','rgba(80,210,190,0.75)','rgba(230,100,150,0.75)',
+        'rgba(80,200,220,0.75)','rgba(160,210,100,0.75)','rgba(240,140,90,0.75)',
+        'rgba(210,220,80,0.75)','rgba(100,120,210,0.75)','rgba(240,150,100,0.75)',
+        'rgba(80,190,170,0.75)','rgba(190,120,200,0.75)','rgba(240,180,100,0.75)',
+        'rgba(130,200,130,0.75)','rgba(120,180,240,0.75)','rgba(230,130,130,0.75)'
+    ];
+
+    function hashStr(s) {
+        let h = 0;
+        for (let i = 0; i < s.length; i++) h = s.charCodeAt(i) + ((h << 5) - h);
+        return Math.abs(h);
+    }
+    function countryColor(d) {
+        const name = d.properties.ADMIN || d.properties.NAME || '';
+        return PALETTE[hashStr(name) % PALETTE.length];
+    }
+
+    // ── Label Data (expanded — all major countries + cities) ──
+    const LABELS = [
+        // Türkiye & Yakın
+        { name:'Türkiye', lat:39, lng:35, sz:1.2 },
+        { name:'İstanbul', lat:41, lng:29, sz:0.7, city:true },
+        { name:'Ankara', lat:39.9, lng:32.9, sz:0.7, city:true },
+        { name:'İzmir', lat:38.4, lng:27.1, sz:0.6, city:true },
+        // Avrupa
+        { name:'Almanya', lat:51, lng:10, sz:1.1 },
+        { name:'Fransa', lat:46.5, lng:2.5, sz:1.1 },
+        { name:'İngiltere', lat:53, lng:-1.5, sz:1 },
+        { name:'İspanya', lat:40, lng:-3.5, sz:1 },
+        { name:'İtalya', lat:42.5, lng:12.5, sz:1 },
+        { name:'Portekiz', lat:39.5, lng:-8, sz:0.8 },
+        { name:'Hollanda', lat:52.3, lng:5, sz:0.7 },
+        { name:'Belçika', lat:50.8, lng:4.4, sz:0.7 },
+        { name:'İsviçre', lat:47, lng:8.2, sz:0.7 },
+        { name:'Avusturya', lat:47.5, lng:14.5, sz:0.8 },
+        { name:'Polonya', lat:52, lng:20, sz:0.9 },
+        { name:'Yunanistan', lat:39, lng:22, sz:0.8 },
+        { name:'İsveç', lat:62, lng:16, sz:0.9 },
+        { name:'Norveç', lat:64, lng:10, sz:0.9 },
+        { name:'Finlandiya', lat:64, lng:26, sz:0.8 },
+        { name:'Danimarka', lat:56, lng:10, sz:0.7 },
+        { name:'İrlanda', lat:53.5, lng:-8, sz:0.7 },
+        { name:'Ukrayna', lat:49, lng:32, sz:0.9 },
+        { name:'Romanya', lat:46, lng:25, sz:0.8 },
+        { name:'Çekya', lat:49.8, lng:15.5, sz:0.7 },
+        { name:'Macaristan', lat:47.2, lng:19.5, sz:0.7 },
+        { name:'Bulgaristan', lat:42.7, lng:25.5, sz:0.7 },
+        { name:'Sırbistan', lat:44, lng:21, sz:0.7 },
+        { name:'Hırvatistan', lat:45.1, lng:16, sz:0.7 },
+        // Rusya & Orta Asya
+        { name:'Rusya', lat:60, lng:100, sz:1.4 },
+        { name:'Kazakistan', lat:48, lng:67, sz:1 },
+        { name:'Özbekistan', lat:41, lng:64.5, sz:0.8 },
+        { name:'Türkmenistan', lat:39, lng:59, sz:0.8 },
+        { name:'Gürcistan', lat:42, lng:43.5, sz:0.7 },
+        { name:'Azerbaycan', lat:40.5, lng:47.5, sz:0.7 },
+        // Ortadoğu
+        { name:'Irak', lat:33, lng:44, sz:0.9 },
+        { name:'İran', lat:32.5, lng:53, sz:1 },
+        { name:'Suriye', lat:35, lng:38.5, sz:0.8 },
+        { name:'S. Arabistan', lat:24, lng:45, sz:1 },
+        { name:'Mısır', lat:26.5, lng:30, sz:1 },
+        { name:'İsrail', lat:31.5, lng:34.8, sz:0.6 },
+        { name:'BAE', lat:24, lng:54, sz:0.7 },
+        { name:'Ürdün', lat:31, lng:36.5, sz:0.6 },
+        { name:'Lübnan', lat:33.9, lng:35.8, sz:0.5 },
+        { name:'Yemen', lat:15.5, lng:48, sz:0.8 },
+        { name:'Umman', lat:21, lng:57, sz:0.8 },
+        // Afrika
+        { name:'Fas', lat:32, lng:-6, sz:0.8 },
+        { name:'Cezayir', lat:28, lng:3, sz:0.9 },
+        { name:'Tunus', lat:34, lng:9, sz:0.7 },
+        { name:'Libya', lat:27, lng:17, sz:0.9 },
+        { name:'Mısır', lat:26.5, lng:30, sz:1 },
+        { name:'Sudan', lat:15.5, lng:30, sz:0.9 },
+        { name:'Çad', lat:15, lng:19, sz:0.8 },
+        { name:'Nijer', lat:17.5, lng:8, sz:0.8 },
+        { name:'Mali', lat:17, lng:-2, sz:0.8 },
+        { name:'Moritanya', lat:20, lng:-10, sz:0.8 },
+        { name:'Nijerya', lat:9, lng:8, sz:1 },
+        { name:'Gana', lat:7.5, lng:-1.5, sz:0.7 },
+        { name:'Kamerun', lat:6, lng:12, sz:0.7 },
+        { name:'Kongo', lat:-4, lng:22, sz:0.9 },
+        { name:'Angola', lat:-12.5, lng:18.5, sz:0.8 },
+        { name:'Etiyopya', lat:9, lng:38.7, sz:0.8 },
+        { name:'Kenya', lat:0, lng:38, sz:0.8 },
+        { name:'Tanzanya', lat:-6.5, lng:35, sz:0.8 },
+        { name:'Mozambik', lat:-18, lng:35, sz:0.8 },
+        { name:'Madagaskar', lat:-19, lng:47, sz:0.8 },
+        { name:'Güney Afrika', lat:-30, lng:25, sz:1 },
+        { name:'Namibya', lat:-22, lng:17, sz:0.8 },
+        { name:'Zambiya', lat:-14, lng:28, sz:0.8 },
+        { name:'Somali', lat:5, lng:46, sz:0.7 },
+        // Asya
+        { name:'Çin', lat:35, lng:105, sz:1.3 },
+        { name:'Japonya', lat:36, lng:138, sz:1 },
+        { name:'Hindistan', lat:22, lng:80, sz:1.2 },
+        { name:'G. Kore', lat:36.5, lng:128, sz:0.8 },
+        { name:'K. Kore', lat:40, lng:127, sz:0.7 },
+        { name:'Endonezya', lat:-5, lng:118, sz:1 },
+        { name:'Pakistan', lat:30, lng:69, sz:0.9 },
+        { name:'Afganistan', lat:33.5, lng:66, sz:0.8 },
+        { name:'Tayland', lat:15, lng:101, sz:0.8 },
+        { name:'Vietnam', lat:16, lng:108, sz:0.8 },
+        { name:'Myanmar', lat:19.5, lng:96, sz:0.8 },
+        { name:'Filipinler', lat:12, lng:122, sz:0.8 },
+        { name:'Malezya', lat:4, lng:109, sz:0.7 },
+        { name:'Moğolistan', lat:47, lng:104, sz:0.9 },
+        { name:'Bangladeş', lat:24, lng:90, sz:0.7 },
+        { name:'Nepal', lat:28, lng:84, sz:0.6 },
+        // Amerika
+        { name:'ABD', lat:40, lng:-100, sz:1.4 },
+        { name:'Kanada', lat:56, lng:-106, sz:1.3 },
+        { name:'Meksika', lat:23, lng:-102, sz:1 },
+        { name:'Küba', lat:22, lng:-80, sz:0.7 },
+        { name:'Guatemala', lat:15.5, lng:-90.3, sz:0.6 },
+        { name:'Brezilya', lat:-14, lng:-51, sz:1.3 },
+        { name:'Arjantin', lat:-34, lng:-64, sz:1 },
+        { name:'Kolombiya', lat:4, lng:-72, sz:0.8 },
+        { name:'Venezuela', lat:7, lng:-66, sz:0.8 },
+        { name:'Peru', lat:-10, lng:-76, sz:0.8 },
+        { name:'Şili', lat:-33, lng:-71, sz:0.8 },
+        { name:'Bolivya', lat:-17, lng:-65, sz:0.7 },
+        { name:'Paraguay', lat:-23, lng:-58, sz:0.7 },
+        { name:'Uruguay', lat:-33, lng:-56, sz:0.6 },
+        { name:'Ekvador', lat:-1.5, lng:-78, sz:0.6 },
+        // Okyanusya
+        { name:'Avustralya', lat:-25, lng:134, sz:1.2 },
+        { name:'Yeni Zelanda', lat:-42, lng:174, sz:0.8 },
+        // Büyük Şehirler
+        { name:'New York', lat:40.7, lng:-74, sz:0.6, city:true },
+        { name:'Londra', lat:51.5, lng:-0.1, sz:0.7, city:true },
+        { name:'Paris', lat:48.9, lng:2.3, sz:0.6, city:true },
+        { name:'Tokyo', lat:35.7, lng:139.7, sz:0.7, city:true },
+        { name:'Pekin', lat:39.9, lng:116.4, sz:0.6, city:true },
+        { name:'Dubai', lat:25.2, lng:55.3, sz:0.6, city:true },
+        { name:'Moskova', lat:55.8, lng:37.6, sz:0.7, city:true },
+        { name:'Sydney', lat:-33.9, lng:151.2, sz:0.6, city:true },
+        { name:'Kahire', lat:30, lng:31.2, sz:0.6, city:true },
+        { name:'Berlin', lat:52.5, lng:13.4, sz:0.6, city:true },
+    ];
+
+    // ── Create HTML label element (embedded surface style) ──
+    function createLabelEl(d) {
+        const el = document.createElement('div');
+        el.style.cssText = `
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            font-size: ${d.city ? 9 : 12 * (d.sz || 1)}px;
+            font-weight: ${d.city ? '500' : '700'};
+            color: ${d.city ? 'rgba(0,40,80,0.8)' : 'rgba(0,0,0,0.75)'};
+            text-shadow: none;
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+            text-align: center;
+            letter-spacing: ${d.city ? '0.5' : '1'}px;
+            opacity: 0.85;
+        `;
+        el.textContent = d.name;
+        return el;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // SUPPLY CHAIN DATA — Suppliers, Stores, Shipping Routes
+    // ═══════════════════════════════════════════════════════════
+
+    const SUPPLIERS = [
+        { id:'s1', name:'Guangzhou Textile Co.', lat:23.1, lng:113.3, type:'supplier', product:'Kumaş', color:'#ff4444', size:0.6 },
+        { id:'s2', name:'Shanghai Fabric Hub', lat:31.2, lng:121.5, type:'supplier', product:'Polyester', color:'#ff4444', size:0.5 },
+        { id:'s3', name:'Shenzhen Materials', lat:22.5, lng:114.1, type:'supplier', product:'Aksesuar', color:'#ff4444', size:0.4 },
+        { id:'s4', name:'Mumbai Cotton Mills', lat:19.1, lng:72.9, type:'supplier', product:'Pamuk İplik', color:'#ff9800', size:0.5 },
+        { id:'s5', name:'Delhi Textiles Ltd.', lat:28.6, lng:77.2, type:'supplier', product:'Viskon', color:'#ff9800', size:0.4 },
+        { id:'s6', name:'Dhaka Garments', lat:23.8, lng:90.4, type:'supplier', product:'Hazır Giyim', color:'#ff9800', size:0.5 },
+        { id:'s7', name:'Milano Fashion SRL', lat:45.5, lng:9.2, type:'supplier', product:'Premium Kumaş', color:'#b800ff', size:0.5 },
+        { id:'s8', name:'Prato Tessuti', lat:43.9, lng:11.1, type:'supplier', product:'Yün/Kaşmir', color:'#b800ff', size:0.4 },
+        { id:'s9', name:'Bursa Tekstil A.Ş.', lat:40.2, lng:29.0, type:'supplier', product:'Havlu/Bornoz', color:'#00d4ff', size:0.4 },
+        { id:'s10', name:'Denizli Dokuma', lat:37.8, lng:29.1, type:'supplier', product:'Ev Tekstili', color:'#00d4ff', size:0.4 },
+        { id:'s11', name:'Ho Chi Minh Garments', lat:10.8, lng:106.6, type:'supplier', product:'Konfeksiyon', color:'#ff9800', size:0.4 },
+        { id:'s12', name:'Karachi Cottons', lat:24.9, lng:67.0, type:'supplier', product:'Denim', color:'#ff9800', size:0.4 },
+    ];
+
+    const STORES = [
+        { id:'m1', name:'Merkez Mağaza — İstanbul', lat:41.01, lng:28.98, type:'store', status:'AKTİF', color:'#00ff88', size:0.7 },
+        { id:'m2', name:'Showroom — Ankara', lat:39.93, lng:32.86, type:'store', status:'AKTİF', color:'#00ff88', size:0.5 },
+        { id:'m3', name:'Depo — İzmir', lat:38.42, lng:27.14, type:'store', status:'AKTİF', color:'#00ff88', size:0.5 },
+        { id:'m4', name:'Online Depo — İstanbul', lat:41.05, lng:29.10, type:'store', status:'AKTİF', color:'#0af5c2', size:0.4 },
+    ];
+
+    const ALL_POINTS = [...SUPPLIERS, ...STORES];
+
+    // ── Shipping Routes (Arcs) ──
+    const SHIPPING_ROUTES = [
+        { from:'s1', to:'m1', label:'Kumaş Sevkiyatı', color:'#ff4444', status:'transit' },
+        { from:'s2', to:'m4', label:'Polyester Kargo', color:'#ff6644', status:'transit' },
+        { from:'s4', to:'m1', label:'Pamuk İplik', color:'#ff9800', status:'transit' },
+        { from:'s6', to:'m4', label:'Hazır Giyim', color:'#ffbb33', status:'delivered' },
+        { from:'s7', to:'m1', label:'Premium Kumaş', color:'#b800ff', status:'transit' },
+        { from:'s8', to:'m2', label:'Kaşmir Siparişi', color:'#b800ff', status:'preparing' },
+        { from:'s9', to:'m3', label:'Havlu Stok', color:'#00d4ff', status:'delivered' },
+        { from:'s11', to:'m4', label:'Konfeksiyon', color:'#ff9800', status:'transit' },
+        { from:'m1', to:'m2', label:'İç Transfer', color:'#0af5c2', status:'transit' },
+        { from:'m1', to:'m3', label:'Stok Dağıtım', color:'#0af5c2', status:'delivered' },
+    ];
+
+    // Resolve arc coordinates
+    const arcData = SHIPPING_ROUTES.map(r => {
+        const fromPt = ALL_POINTS.find(p => p.id === r.from);
+        const toPt = ALL_POINTS.find(p => p.id === r.to);
+        if (!fromPt || !toPt) return null;
+        return {
+            startLat: fromPt.lat, startLng: fromPt.lng,
+            endLat: toPt.lat, endLng: toPt.lng,
+            color: r.color, label: r.label, status: r.status,
+            fromName: fromPt.name, toName: toPt.name
+        };
+    }).filter(Boolean);
+
+    // ── Build Globe ──
+    let globe;
+    let isPaused = false;
+
+    fetch(GEOJSON_URL)
+        .then(r => r.json())
+        .then(countries => {
+            globe = new Globe(document.getElementById('globeContainer'))
+                .globeImageUrl('//cdn.jsdelivr.net/npm/three-globe/example/img/earth-blue-marble.jpg')
+                .bumpImageUrl('//cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png')
+                .backgroundColor('#000508')
+                .atmosphereColor('#6baed6')
+                .atmosphereAltitude(0.18)
+                .showGraticules(false)
+
+                // ── Country Polygons ──
+                .polygonsData(countries.features.filter(d => d.properties.ISO_A2 !== 'AQ'))
+                .polygonAltitude(0.006)
+                .polygonCapColor(d => countryColor(d))
+                .polygonSideColor(() => 'rgba(0,0,0,0.08)')
+                .polygonStrokeColor(() => 'rgba(0,0,0,0.15)')
+                .polygonLabel(({ properties: d }) =>
+                    `<div class="globe-tooltip"><b>${d.ADMIN || d.NAME}</b></div>`
+                )
+                .onPolygonHover(hoverD => {
+                    globe
+                        .polygonAltitude(d => d === hoverD ? 0.03 : 0.006)
+                        .polygonCapColor(d => d === hoverD ? 'rgba(255,255,255,0.85)' : countryColor(d));
+                })
+                .onPolygonClick((d, event) => openCountryPanel(d))
+                .polygonsTransitionDuration(200)
+
+                // ── HTML Labels ──
+                .htmlElementsData(LABELS)
+                .htmlLat(d => d.lat)
+                .htmlLng(d => d.lng)
+                .htmlElement(d => createLabelEl(d))
+                .htmlAltitude(0.001)
+
+                // ── Supply Chain Pins ──
+                .pointsData(ALL_POINTS)
+                .pointLat(d => d.lat)
+                .pointLng(d => d.lng)
+                .pointColor(d => d.color)
+                .pointAltitude(0.01)
+                .pointRadius(d => d.size)
+                .pointLabel(d => `<div class="globe-tooltip">
+                    <b>${d.name}</b><br>
+                    <span style="color:${d.color};font-size:10px">
+                        ${d.type === 'supplier' ? '🏭 TEDARİKÇİ' : '🏪 MAĞAZA'}
+                        ${d.product ? ' — ' + d.product : ''}
+                    </span>
+                </div>`)
+
+                // ── Shipping Arcs ──
+                .arcsData(arcData)
+                .arcStartLat(d => d.startLat)
+                .arcStartLng(d => d.startLng)
+                .arcEndLat(d => d.endLat)
+                .arcEndLng(d => d.endLng)
+                .arcColor(d => [`${d.color}cc`, `${d.color}44`])
+                .arcStroke(0.4)
+                .arcDashLength(0.4)
+                .arcDashGap(0.2)
+                .arcDashAnimateTime(2000)
+                .arcLabel(d => `<div class="globe-tooltip">
+                    <b>${d.label}</b><br>
+                    <span style="font-size:10px;color:rgba(255,255,255,0.5)">
+                        ${d.fromName} → ${d.toName}
+                    </span><br>
+                    <span style="font-size:10px;color:${
+                        d.status === 'transit' ? '#ff9800' :
+                        d.status === 'delivered' ? '#00ff88' : '#00d4ff'
+                    }">
+                        ${d.status === 'transit' ? '🚢 YOLDA' :
+                          d.status === 'delivered' ? '✅ TESLİM' : '📦 HAZIRLANIYOR'}
+                    </span>
+                </div>`)
+
+                // ── Pulse Rings on Stores ──
+                .ringsData(STORES)
+                .ringLat(d => d.lat)
+                .ringLng(d => d.lng)
+                .ringColor(() => t => `rgba(0,255,136,${1 - t})`)
+                .ringMaxRadius(2)
+                .ringPropagationSpeed(1.5)
+                .ringRepeatPeriod(1400);
+
+            // Auto-rotation
+            globe.controls().autoRotate = true;
+            globe.controls().autoRotateSpeed = 0.4;
+            globe.controls().enableDamping = true;
+
+            // Set initial view — Turkey centered
+            globe.pointOfView({ lat: 39, lng: 35, altitude: 2.2 }, 1000);
+
+            // Hide loading
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 1200);
+
+            // ── HUD Update Loop ──
+            setInterval(() => {
+                if (!globe) return;
+                const pov = globe.pointOfView();
+                document.getElementById('zoomVal').textContent = (3 / Math.max(0.5, pov.altitude)).toFixed(1) + 'x';
+                document.getElementById('rotVal').textContent = ((pov.lng + 360) % 360).toFixed(1) + '°';
+                document.getElementById('tiltVal').textContent = pov.lat.toFixed(1) + '°';
+
+                const coordEl = document.getElementById('coordStatus');
+                if (coordEl) {
+                    coordEl.textContent = `LAT: ${pov.lat.toFixed(2)}°  LON: ${pov.lng.toFixed(2)}°`;
+                }
+            }, 200);
+        })
+        .catch(err => {
+            console.error('GeoJSON yüklenemedi:', err);
+            document.querySelector('.loading-text').textContent = 'HATA: VERİ YÜKLENEMEDİ';
+        });
+
+    // ── Pause / Play ──
+    function togglePause() {
+        isPaused = !isPaused;
+        if (globe) {
+            globe.controls().autoRotate = !isPaused;
+        }
+        const btn = document.getElementById('pauseBtn');
+        const icon = document.getElementById('pauseIcon');
+        const text = document.getElementById('pauseText');
+        if (isPaused) {
+            btn.classList.add('paused');
+            icon.textContent = '▶';
+            text.textContent = 'Başlat';
+        } else {
+            btn.classList.remove('paused');
+            icon.textContent = '❚❚';
+            text.textContent = 'Durdur';
+        }
+    }
+
+    document.getElementById('pauseBtn').addEventListener('click', togglePause);
+    window.addEventListener('keydown', e => {
+        if (e.code === 'Space') { e.preventDefault(); togglePause(); }
+    });
+
+    // Double-click to reset view
+    document.getElementById('globeContainer').addEventListener('dblclick', () => {
+        if (globe) globe.pointOfView({ lat: 39, lng: 35, altitude: 2.2 }, 1000);
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // COUNTRY PANEL — Open / Close / Populate
+    // ═══════════════════════════════════════════════════════════
+
+    let selectedCountry = null;
+
+    function formatNumber(n) {
+        if (!n || isNaN(n)) return '—';
+        if (n >= 1e9) return (n / 1e9).toFixed(1) + ' Milyar';
+        if (n >= 1e6) return (n / 1e6).toFixed(1) + ' Milyon';
+        if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+        return n.toLocaleString('tr-TR');
+    }
+
+    function formatMoney(n) {
+        if (!n || isNaN(n)) return '—';
+        if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + ' Trilyon';
+        if (n >= 1e3) return '$' + (n / 1e3).toFixed(0) + ' Milyar';
+        return '$' + n.toLocaleString('tr-TR') + 'M';
+    }
+
+    function openCountryPanel(d) {
+        const p = d.properties;
+        selectedCountry = d;
+
+        const name = p.ADMIN || p.NAME || '—';
+        const iso = p.ISO_A2 || p.ISO_A3 || '—';
+        const pop = p.POP_EST;
+        const gdp = p.GDP_MD_EST;
+        const continent = p.CONTINENT || p.REGION_UN || '—';
+
+        // ── Deterministic hash for consistent per-country values ──
+        const h = hashStr(name);
+
+        // ── Threat Assessment ──
+        const THREAT_LEVELS = [
+            { label: 'DÜŞÜK', color: '#00ff88' },
+            { label: 'NORMAL', color: '#00d4ff' },
+            { label: 'ORTA', color: '#ffd700' },
+            { label: 'YÜKSEK', color: '#ff9800' },
+            { label: 'KRİTİK', color: '#ff4444' }
+        ];
+        const threatIdx = h % 5;
+        const threat = THREAT_LEVELS[threatIdx];
+        const stability = (60 + (h % 40)).toFixed(1);
+        const risk = ((h % 80) + 10).toFixed(0);
+
+        // ── Agent Deployment ──
+        const MODELS = ['QWEN 2.5', 'GEMMA 4', 'QWEN 3.5', 'KIMI K2.5', 'GLM 5.1', 'MINIMAX', 'QWEN CLOUD'];
+        const TASK_STATES = ['İZLEME', 'AKTİF GÖREV', 'BEKLEMEDE', 'TARAMA', 'VERİ TOPLAMA', 'ANALİZ'];
+        const agentCount = 1 + (h % 7);
+        const assignedModel = MODELS[h % MODELS.length];
+        const taskStatus = TASK_STATES[h % TASK_STATES.length];
+        const scanMinutes = 1 + (h % 45);
+        const scanTime = scanMinutes + ' dk önce';
+
+        // ── Data Coverage ──
+        const FEED_STATUS = ['AKTİF ✓', 'SENKRONİZE', 'GECİKMELİ', 'STANDBY'];
+        const feedStatus = FEED_STATUS[h % FEED_STATUS.length];
+        const dataPoints = (50 + (h % 950)).toLocaleString('tr-TR');
+        const bandwidth = ((h % 900 + 100) / 100).toFixed(1) + ' GB/s';
+
+        // ── Strategic Value ──
+        const PRIORITIES = ['TIER-1 ◆', 'TIER-2 ◇', 'TIER-3 ○', 'GÖZLEM'];
+        const priority = gdp && gdp > 500000 ? PRIORITIES[0] : gdp && gdp > 100000 ? PRIORITIES[1] : gdp && gdp > 10000 ? PRIORITIES[2] : PRIORITIES[3];
+
+        // ── Populate Panel ──
+        document.getElementById('cpName').textContent = name;
+        document.getElementById('cpIso').textContent = `◉ ${iso} — ${continent}`;
+
+        // Threat
+        const threatEl = document.getElementById('cpThreat');
+        threatEl.textContent = threat.label;
+        threatEl.style.color = threat.color;
+        document.getElementById('cpStability').textContent = stability + '%';
+        document.getElementById('cpRisk').textContent = risk + '/100';
+        document.getElementById('cpColorBar').style.background = `linear-gradient(90deg, ${threat.color}, transparent)`;
+
+        // Agents
+        document.getElementById('cpAgents').textContent = agentCount + ' birim';
+        document.getElementById('cpModel').textContent = assignedModel;
+        document.getElementById('cpTaskStatus').textContent = taskStatus;
+        document.getElementById('cpLastScan').textContent = scanTime;
+
+        // Data
+        document.getElementById('cpFeed').textContent = feedStatus;
+        document.getElementById('cpDataPoints').textContent = dataPoints;
+        document.getElementById('cpBandwidth').textContent = bandwidth;
+
+        // Strategic
+        document.getElementById('cpPop').textContent = formatNumber(pop);
+        document.getElementById('cpGdp').textContent = formatMoney(gdp);
+        document.getElementById('cpPriority').textContent = priority;
+
+        // Open panel
+        document.getElementById('countryPanel').classList.add('open');
+    }
+
+    function closeCountryPanel() {
+        document.getElementById('countryPanel').classList.remove('open');
+        selectedCountry = null;
+    }
+
+    document.getElementById('cpClose').addEventListener('click', closeCountryPanel);
+
+    // Escape to close panel
+    window.addEventListener('keydown', e => {
+        if (e.code === 'Escape') closeCountryPanel();
+    });
+
+    // Focus button — zoom to selected country
+    document.getElementById('cpFocusBtn').addEventListener('click', () => {
+        if (!selectedCountry || !globe) return;
+        const geo = selectedCountry.geometry;
+        // Calculate centroid from geometry
+        let latSum = 0, lngSum = 0, count = 0;
+        const coords = geo.type === 'MultiPolygon'
+            ? geo.coordinates.flat(2)
+            : geo.coordinates.flat(1);
+        coords.forEach(c => {
+            lngSum += c[0];
+            latSum += c[1];
+            count++;
+        });
+        if (count > 0) {
+            globe.pointOfView({ lat: latSum / count, lng: lngSum / count, altitude: 1.2 }, 1000);
+        }
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // LEFT TOOLBAR — Command Actions
+    // ═══════════════════════════════════════════════════════════
+
+    let showPins = true;
+    let showArcs = true;
+
+    const cmdBtns = document.querySelectorAll('.cmd-btn');
+    cmdBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.id;
+
+            // Pin toggle (İğne Ekle)
+            if (id === 'cmdPin') {
+                showPins = !showPins;
+                btn.classList.toggle('active', showPins);
+                if (globe) globe.pointsData(showPins ? ALL_POINTS : []);
+                return;
+            }
+
+            // Feed toggle (Veri Akışı — shipping arcs)
+            if (id === 'cmdFeed') {
+                showArcs = !showArcs;
+                btn.classList.toggle('active', showArcs);
+                if (globe) globe.arcsData(showArcs ? arcData : []);
+                return;
+            }
+
+            // Other buttons — toggle active state
+            const wasActive = btn.classList.contains('active');
+            // Don't deactivate pin/feed
+            cmdBtns.forEach(b => {
+                if (b.id !== 'cmdPin' && b.id !== 'cmdFeed') b.classList.remove('active');
+            });
+            if (!wasActive) btn.classList.add('active');
+        });
+    });
+
+    // Set initial active states
+    document.getElementById('cmdPin').classList.add('active');
+    document.getElementById('cmdFeed').classList.add('active');
+    </script>
+</body>
+</html>

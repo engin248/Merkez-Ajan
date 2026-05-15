@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "outDir": "./public/js",
+    "rootDir": "./frontend_src",
+    "strict": false,
+    "allowJs": true,
+    "sourceMap": false,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "types": ["node"],
+    "lib": ["es6", "dom"],
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "ignoreDeprecations": "6.0"
+  },
+  "include": [
+    "frontend_src/**/*"
+  ]
+}

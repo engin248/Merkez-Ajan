@@ -1,0 +1,369 @@
+[2026-05-15T02:36:31.717Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T02:36:31.719Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T02:36:31.727Z] [INFO] [Server] Server exiting...
+[2026-05-15T02:36:31.727Z] [INFO] [ProcessManager] Cleaning up processes...
+[2026-05-15T02:40:01.767Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T02:40:01.788Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T02:40:01.797Z] [INFO] [Server] PANEL Started: http://localhost:8085 | WS: 8086
+[2026-05-15T02:41:19.345Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T02:41:19.347Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T02:41:19.355Z] [INFO] [Server] PANEL Started: http://localhost:8085 | WS: 8086
+[2026-05-15T02:41:25.302Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:41:25.305Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (3ms)
+[2026-05-15T02:41:41.371Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:41:41.372Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:42:41.238Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T02:42:41.240Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T02:42:41.247Z] [INFO] [ProcessManager] Starting ZMQ Bridge daemon...
+[2026-05-15T02:42:41.257Z] [INFO] [ProcessManager] Starting Python Voice Engine (STT/VAD)...
+[2026-05-15T02:42:41.266Z] [INFO] [ProcessManager] Starting RVC Voice Conversion Server...
+[2026-05-15T02:42:41.281Z] [DEBUG] [ProcessManager] ZMQ Bridge spawned in 34ms
+[2026-05-15T02:42:41.282Z] [INFO] [Server] PANEL Started: http://localhost:8085 | WS: 8086
+[2026-05-15T02:42:41.334Z] [WARN] [ProcessManager] ZMQ Bridge exited with code 2. Restarting...
+[2026-05-15T02:42:41.349Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\rvc_server.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:41.355Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\voice_engine.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:41.357Z] [WARN] [ProcessManager] RVC Server exited with code 2. Restarting in 3s...
+[2026-05-15T02:42:41.365Z] [WARN] [ProcessManager] Voice Engine exited with code 2. Restarting in 2s...
+[2026-05-15T02:42:43.344Z] [INFO] [ProcessManager] Starting ZMQ Bridge daemon...
+[2026-05-15T02:42:43.349Z] [DEBUG] [ProcessManager] ZMQ Bridge spawned in 4ms
+[2026-05-15T02:42:43.375Z] [INFO] [ProcessManager] Starting Python Voice Engine (STT/VAD)...
+[2026-05-15T02:42:43.407Z] [WARN] [ProcessManager] ZMQ Bridge exited with code 2. Restarting...
+[2026-05-15T02:42:43.442Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\voice_engine.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:43.449Z] [WARN] [ProcessManager] Voice Engine exited with code 2. Restarting in 2s...
+[2026-05-15T02:42:44.369Z] [INFO] [ProcessManager] Starting RVC Voice Conversion Server...
+[2026-05-15T02:42:44.448Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\rvc_server.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:44.459Z] [WARN] [ProcessManager] RVC Server exited with code 2. Restarting in 3s...
+[2026-05-15T02:42:45.411Z] [INFO] [ProcessManager] Starting ZMQ Bridge daemon...
+[2026-05-15T02:42:45.416Z] [DEBUG] [ProcessManager] ZMQ Bridge spawned in 4ms
+[2026-05-15T02:42:45.457Z] [INFO] [ProcessManager] Starting Python Voice Engine (STT/VAD)...
+[2026-05-15T02:42:45.472Z] [WARN] [ProcessManager] ZMQ Bridge exited with code 2. Restarting...
+[2026-05-15T02:42:45.522Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\voice_engine.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:45.529Z] [WARN] [ProcessManager] Voice Engine exited with code 2. Restarting in 2s...
+[2026-05-15T02:42:47.472Z] [INFO] [ProcessManager] Starting RVC Voice Conversion Server...
+[2026-05-15T02:42:47.479Z] [INFO] [ProcessManager] Starting ZMQ Bridge daemon...
+[2026-05-15T02:42:47.484Z] [DEBUG] [ProcessManager] ZMQ Bridge spawned in 5ms
+[2026-05-15T02:42:47.535Z] [INFO] [ProcessManager] Starting Python Voice Engine (STT/VAD)...
+[2026-05-15T02:42:47.542Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\rvc_server.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:47.543Z] [WARN] [ProcessManager] ZMQ Bridge exited with code 2. Restarting...
+[2026-05-15T02:42:47.549Z] [WARN] [ProcessManager] RVC Server exited with code 2. Restarting in 3s...
+[2026-05-15T02:42:47.601Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\voice_engine.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:47.609Z] [WARN] [ProcessManager] Voice Engine exited with code 2. Restarting in 2s...
+[2026-05-15T02:42:49.552Z] [INFO] [ProcessManager] Starting ZMQ Bridge daemon...
+[2026-05-15T02:42:49.595Z] [DEBUG] [ProcessManager] ZMQ Bridge spawned in 4ms
+[2026-05-15T02:42:49.615Z] [INFO] [ProcessManager] Starting Python Voice Engine (STT/VAD)...
+[2026-05-15T02:42:49.653Z] [WARN] [ProcessManager] ZMQ Bridge exited with code 2. Restarting...
+[2026-05-15T02:42:49.681Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\voice_engine.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:49.690Z] [WARN] [ProcessManager] Voice Engine exited with code 2. Restarting in 2s...
+[2026-05-15T02:42:50.562Z] [INFO] [ProcessManager] Starting RVC Voice Conversion Server...
+[2026-05-15T02:42:50.634Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\rvc_server.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:50.642Z] [WARN] [ProcessManager] RVC Server exited with code 2. Restarting in 3s...
+[2026-05-15T02:42:51.665Z] [INFO] [ProcessManager] Starting ZMQ Bridge daemon...
+[2026-05-15T02:42:51.670Z] [DEBUG] [ProcessManager] ZMQ Bridge spawned in 4ms
+[2026-05-15T02:42:51.696Z] [INFO] [ProcessManager] Starting Python Voice Engine (STT/VAD)...
+[2026-05-15T02:42:51.727Z] [WARN] [ProcessManager] ZMQ Bridge exited with code 2. Restarting...
+[2026-05-15T02:42:51.761Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\voice_engine.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:51.768Z] [WARN] [ProcessManager] Voice Engine exited with code 2. Restarting in 2s...
+[2026-05-15T02:42:53.644Z] [INFO] [ProcessManager] Starting RVC Voice Conversion Server...
+[2026-05-15T02:42:53.710Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\rvc_server.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:53.718Z] [WARN] [ProcessManager] RVC Server exited with code 2. Restarting in 3s...
+[2026-05-15T02:42:53.738Z] [INFO] [ProcessManager] Starting ZMQ Bridge daemon...
+[2026-05-15T02:42:53.743Z] [DEBUG] [ProcessManager] ZMQ Bridge spawned in 4ms
+[2026-05-15T02:42:53.785Z] [INFO] [ProcessManager] Starting Python Voice Engine (STT/VAD)...
+[2026-05-15T02:42:53.800Z] [WARN] [ProcessManager] ZMQ Bridge exited with code 2. Restarting...
+[2026-05-15T02:42:53.862Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\voice_engine.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:53.870Z] [WARN] [ProcessManager] Voice Engine exited with code 2. Restarting in 2s...
+[2026-05-15T02:42:55.814Z] [INFO] [ProcessManager] Starting ZMQ Bridge daemon...
+[2026-05-15T02:42:55.819Z] [DEBUG] [ProcessManager] ZMQ Bridge spawned in 4ms
+[2026-05-15T02:42:55.875Z] [INFO] [ProcessManager] Starting Python Voice Engine (STT/VAD)...
+[2026-05-15T02:42:55.880Z] [WARN] [ProcessManager] ZMQ Bridge exited with code 2. Restarting...
+[2026-05-15T02:42:55.941Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\voice_engine.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:55.949Z] [WARN] [ProcessManager] Voice Engine exited with code 2. Restarting in 2s...
+[2026-05-15T02:42:56.731Z] [INFO] [ProcessManager] Starting RVC Voice Conversion Server...
+[2026-05-15T02:42:56.798Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\rvc_server.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:56.806Z] [WARN] [ProcessManager] RVC Server exited with code 2. Restarting in 3s...
+[2026-05-15T02:42:57.881Z] [INFO] [ProcessManager] Starting ZMQ Bridge daemon...
+[2026-05-15T02:42:57.898Z] [DEBUG] [ProcessManager] ZMQ Bridge spawned in 4ms
+[2026-05-15T02:42:57.957Z] [WARN] [ProcessManager] ZMQ Bridge exited with code 2. Restarting...
+[2026-05-15T02:42:57.958Z] [INFO] [ProcessManager] Starting Python Voice Engine (STT/VAD)...
+[2026-05-15T02:42:58.025Z] [ERROR] [ProcessManager] [STDERR] python.exe: can't open file 'C:\\Users\\Esisya\\Desktop\\asker motoru\\Panel\\python_services\\voice_engine.py': [Errno 2] No such file or directory
+[2026-05-15T02:42:58.032Z] [WARN] [ProcessManager] Voice Engine exited with code 2. Restarting in 2s...
+[2026-05-15T02:43:08.242Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T02:43:08.243Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T02:43:08.250Z] [DEBUG] [ProcessManager] ZMQ Bridge (Deprecated/Native)
+[2026-05-15T02:43:08.251Z] [DEBUG] [ProcessManager] Voice Engine (Native/WebSpeech API)
+[2026-05-15T02:43:08.251Z] [DEBUG] [ProcessManager] RVC Server (Deprecated/Native)
+[2026-05-15T02:43:08.252Z] [INFO] [Server] PANEL Started: http://localhost:8085 | WS: 8086
+[2026-05-15T02:44:25.450Z] [TRACE] [Server] [STATIC] GET / - 200 (9ms)
+[2026-05-15T02:44:25.461Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (4ms)
+[2026-05-15T02:44:25.490Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (31ms)
+[2026-05-15T02:44:25.599Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy.ts - 200 (139ms)
+[2026-05-15T02:44:25.608Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (148ms)
+[2026-05-15T02:44:25.661Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel_renderer.ts - 200 (15ms)
+[2026-05-15T02:44:25.695Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/context_menu.ts - 200 (49ms)
+[2026-05-15T02:44:25.710Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/data.ts - 200 (63ms)
+[2026-05-15T02:44:25.723Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/voice.ts - 200 (77ms)
+[2026-05-15T02:44:25.733Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/state.ts - 200 (86ms)
+[2026-05-15T02:44:25.750Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/monitor.ts - 200 (103ms)
+[2026-05-15T02:44:25.761Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/logger.ts - 200 (9ms)
+[2026-05-15T02:44:25.770Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/training.ts - 200 (17ms)
+[2026-05-15T02:44:25.786Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/renderer.ts - 200 (33ms)
+[2026-05-15T02:44:25.792Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel.ts - 200 (39ms)
+[2026-05-15T02:44:25.932Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:44:25.934Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:44:30.883Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:44:30.885Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:44:35.916Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:44:35.917Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:44:40.920Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:44:40.922Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:44:45.897Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:44:45.899Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:44:50.900Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:44:50.902Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:44:55.894Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:44:55.908Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (14ms)
+[2026-05-15T02:44:56.257Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T02:44:56.683Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (426ms)
+[2026-05-15T02:45:01.479Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T02:45:01.480Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T02:45:01.488Z] [DEBUG] [ProcessManager] ZMQ Bridge (Deprecated/Native)
+[2026-05-15T02:45:01.488Z] [DEBUG] [ProcessManager] Voice Engine (Native/WebSpeech API)
+[2026-05-15T02:45:01.489Z] [DEBUG] [ProcessManager] RVC Server (Deprecated/Native)
+[2026-05-15T02:45:01.491Z] [INFO] [Server] PANEL Started: http://localhost:8085 | WS: 8086
+[2026-05-15T02:45:01.659Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:45:01.662Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (3ms)
+[2026-05-15T02:45:05.897Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:45:05.899Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:45:10.886Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:45:10.887Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:45:15.714Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T02:45:15.916Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:45:15.917Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:45:15.951Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (237ms)
+[2026-05-15T02:45:20.895Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:45:20.896Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:45:25.890Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:45:25.890Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:47:40.608Z] [INFO] [WebSocket] WebSocket Server started on port 8086
+[2026-05-15T02:47:40.608Z] [INFO] [ProcessManager] Checking/Starting Ollama AI Engine...
+[2026-05-15T02:47:40.615Z] [DEBUG] [ProcessManager] ZMQ Bridge (Deprecated/Native)
+[2026-05-15T02:47:40.616Z] [DEBUG] [ProcessManager] Voice Engine (Native/WebSpeech API)
+[2026-05-15T02:47:40.616Z] [DEBUG] [ProcessManager] RVC Server (Deprecated/Native)
+[2026-05-15T02:47:40.618Z] [INFO] [Server] PANEL Started: http://localhost:8085 | WS: 8086
+[2026-05-15T02:47:42.178Z] [TRACE] [Server] [STATIC] GET / - 200 (6ms)
+[2026-05-15T02:47:42.191Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (2ms)
+[2026-05-15T02:47:42.203Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (12ms)
+[2026-05-15T02:47:42.224Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (31ms)
+[2026-05-15T02:47:42.314Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy.ts - 200 (121ms)
+[2026-05-15T02:47:42.515Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel_renderer.ts - 200 (21ms)
+[2026-05-15T02:47:42.544Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/context_menu.ts - 200 (49ms)
+[2026-05-15T02:47:42.565Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/voice.ts - 200 (70ms)
+[2026-05-15T02:47:42.581Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/state.ts - 200 (85ms)
+[2026-05-15T02:47:42.590Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/data.ts - 200 (93ms)
+[2026-05-15T02:47:42.603Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/monitor.ts - 200 (106ms)
+[2026-05-15T02:47:42.611Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/logger.ts - 200 (94ms)
+[2026-05-15T02:47:42.621Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/training.ts - 200 (54ms)
+[2026-05-15T02:47:42.634Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel.ts - 200 (62ms)
+[2026-05-15T02:47:42.662Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/renderer.ts - 200 (57ms)
+[2026-05-15T02:47:42.855Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:47:42.856Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:47:43.595Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (3ms)
+[2026-05-15T02:47:47.770Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:47:47.771Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:47:49.158Z] [DEBUG] [Server] [REQUEST] POST /api/sohbet
+[2026-05-15T02:47:52.770Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:47:52.771Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:47:57.758Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:47:57.758Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:47:58.413Z] [INFO] [Server] [RESPONSE] POST /api/sohbet - 200 (9255ms)
+[2026-05-15T02:48:02.756Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:48:02.757Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:48:07.760Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:48:07.760Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:48:12.762Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:48:12.763Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:48:17.753Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:48:17.754Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:48:22.759Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:48:22.760Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:48:27.766Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:48:27.768Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:48:32.696Z] [TRACE] [Server] [STATIC] GET /training.html - 200 (1ms)
+[2026-05-15T02:48:32.719Z] [TRACE] [Server] [STATIC] GET /frontend_src/training.ts - 200 (3ms)
+[2026-05-15T02:48:32.720Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (3ms)
+[2026-05-15T02:48:32.727Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (10ms)
+[2026-05-15T02:48:32.730Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (13ms)
+[2026-05-15T02:49:19.583Z] [TRACE] [Server] [STATIC] GET /strategy.html - 200 (1ms)
+[2026-05-15T02:49:19.602Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (2ms)
+[2026-05-15T02:49:19.604Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (4ms)
+[2026-05-15T02:49:19.610Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (10ms)
+[2026-05-15T02:49:19.651Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy.ts - 200 (51ms)
+[2026-05-15T02:49:19.705Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel_renderer.ts - 200 (12ms)
+[2026-05-15T02:49:19.712Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/voice.ts - 200 (18ms)
+[2026-05-15T02:49:19.728Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/context_menu.ts - 200 (34ms)
+[2026-05-15T02:49:19.735Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/data.ts - 200 (41ms)
+[2026-05-15T02:49:19.740Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/monitor.ts - 200 (45ms)
+[2026-05-15T02:49:19.745Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/state.ts - 200 (50ms)
+[2026-05-15T02:49:19.750Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/logger.ts - 200 (21ms)
+[2026-05-15T02:49:19.753Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/training.ts - 200 (24ms)
+[2026-05-15T02:49:19.757Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel.ts - 200 (27ms)
+[2026-05-15T02:49:19.767Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/renderer.ts - 200 (21ms)
+[2026-05-15T02:49:19.885Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:49:19.886Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:49:20.609Z] [TRACE] [Server] [STATIC] GET /training.html - 200 (1ms)
+[2026-05-15T02:49:20.630Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (1ms)
+[2026-05-15T02:49:20.633Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (3ms)
+[2026-05-15T02:49:20.635Z] [TRACE] [Server] [STATIC] GET /frontend_src/training.ts - 200 (5ms)
+[2026-05-15T02:49:20.638Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (8ms)
+[2026-05-15T02:49:20.717Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/data.ts - 200 (4ms)
+[2026-05-15T02:49:20.722Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/state.ts - 200 (9ms)
+[2026-05-15T02:49:20.739Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/renderer.ts - 200 (24ms)
+[2026-05-15T02:49:20.754Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/ui.ts - 200 (39ms)
+[2026-05-15T02:49:20.762Z] [TRACE] [Server] [STATIC] GET /frontend_src/utils/logger - 200 (3ms)
+[2026-05-15T02:49:20.767Z] [INFO] [WebSocket] Browser connected to Telemetry Bridge
+[2026-05-15T02:49:21.472Z] [TRACE] [Server] [STATIC] GET /map.html - 200 (1ms)
+[2026-05-15T02:49:21.481Z] [INFO] [WebSocket] Browser disconnected from Telemetry Bridge
+[2026-05-15T02:49:21.494Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (4ms)
+[2026-05-15T02:49:21.496Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (6ms)
+[2026-05-15T02:49:21.497Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (8ms)
+[2026-05-15T02:49:29.863Z] [TRACE] [Server] [STATIC] GET /index.html - 200 (1ms)
+[2026-05-15T02:49:29.917Z] [TRACE] [Server] [STATIC] GET /frontend_src/script.ts - 200 (2ms)
+[2026-05-15T02:49:29.920Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (4ms)
+[2026-05-15T02:49:29.925Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (9ms)
+[2026-05-15T02:49:33.248Z] [TRACE] [Server] [STATIC] GET /strategy.html - 200 (1ms)
+[2026-05-15T02:49:33.291Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (1ms)
+[2026-05-15T02:49:33.296Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (4ms)
+[2026-05-15T02:49:33.327Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy.ts - 200 (34ms)
+[2026-05-15T02:49:33.331Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (38ms)
+[2026-05-15T02:49:33.401Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/voice.ts - 200 (6ms)
+[2026-05-15T02:49:33.413Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/context_menu.ts - 200 (18ms)
+[2026-05-15T02:49:33.421Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel_renderer.ts - 200 (27ms)
+[2026-05-15T02:49:33.427Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/data.ts - 200 (32ms)
+[2026-05-15T02:49:33.430Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/state.ts - 200 (34ms)
+[2026-05-15T02:49:33.433Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/monitor.ts - 200 (37ms)
+[2026-05-15T02:49:33.438Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/logger.ts - 200 (16ms)
+[2026-05-15T02:49:33.441Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel.ts - 200 (19ms)
+[2026-05-15T02:49:33.444Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/training.ts - 200 (22ms)
+[2026-05-15T02:49:33.452Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/renderer.ts - 200 (18ms)
+[2026-05-15T02:49:33.555Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:49:33.556Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:49:38.551Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:49:38.552Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:49:43.546Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:49:43.546Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:49:48.578Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:49:48.579Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:49:53.549Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:49:53.551Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (2ms)
+[2026-05-15T02:49:58.558Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:49:58.559Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:50:03.548Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:03.548Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:50:08.551Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:08.552Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:50:13.553Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:13.554Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:50:18.781Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:18.782Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:50:23.551Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:23.552Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:50:28.553Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:28.554Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:50:33.550Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:33.550Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:50:38.549Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:38.549Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:50:43.562Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:43.563Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:50:48.551Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:48.551Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:50:53.557Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:53.557Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:50:58.553Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:50:58.554Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:51:03.552Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:51:03.553Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:51:08.555Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:51:08.556Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:51:13.560Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:51:13.561Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:51:18.545Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:51:18.546Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:51:23.541Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:51:23.541Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:51:28.549Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:51:28.550Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:51:32.724Z] [TRACE] [Server] [STATIC] GET /training.html - 200 (1ms)
+[2026-05-15T02:51:32.736Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (0ms)
+[2026-05-15T02:51:32.742Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (5ms)
+[2026-05-15T02:51:32.745Z] [TRACE] [Server] [STATIC] GET /frontend_src/training.ts - 200 (7ms)
+[2026-05-15T02:51:32.747Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (9ms)
+[2026-05-15T02:51:32.821Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/state.ts - 200 (4ms)
+[2026-05-15T02:51:32.823Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/data.ts - 200 (6ms)
+[2026-05-15T02:51:32.840Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/renderer.ts - 200 (23ms)
+[2026-05-15T02:51:32.852Z] [TRACE] [Server] [STATIC] GET /frontend_src/training/ui.ts - 200 (35ms)
+[2026-05-15T02:51:32.857Z] [TRACE] [Server] [STATIC] GET /frontend_src/utils/logger - 200 (3ms)
+[2026-05-15T02:51:32.860Z] [INFO] [WebSocket] Browser connected to Telemetry Bridge
+[2026-05-15T02:51:36.455Z] [ERROR] [WebSocket] Telemetry Error: Unexpected token 'P', "[PM2] Spawn"... is not valid JSON
+[2026-05-15T02:51:39.135Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T02:51:42.135Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":252}
+[2026-05-15T02:51:45.133Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T02:51:48.159Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":263}
+[2026-05-15T02:51:51.185Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":277}
+[2026-05-15T02:51:54.169Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":247}
+[2026-05-15T02:51:57.192Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":261}
+[2026-05-15T02:52:00.179Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":245}
+[2026-05-15T02:52:03.182Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T02:52:06.205Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":262}
+[2026-05-15T02:52:09.218Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":262}
+[2026-05-15T02:52:12.217Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T02:52:15.232Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":248}
+[2026-05-15T02:52:18.234Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":247}
+[2026-05-15T02:52:21.261Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":265}
+[2026-05-15T02:52:24.251Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":245}
+[2026-05-15T02:52:27.260Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T02:52:30.268Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":247}
+[2026-05-15T02:52:33.284Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":249}
+[2026-05-15T02:52:36.340Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":291}
+[2026-05-15T02:52:39.364Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":306}
+[2026-05-15T02:52:42.312Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T02:52:45.349Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":278}
+[2026-05-15T02:52:48.352Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":276}
+[2026-05-15T02:52:51.354Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":272}
+[2026-05-15T02:52:54.374Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":279}
+[2026-05-15T02:52:57.343Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":247}
+[2026-05-15T02:53:00.341Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":246}
+[2026-05-15T02:53:03.368Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":262}
+[2026-05-15T02:53:06.393Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":280}
+[2026-05-15T02:53:09.375Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":260}
+[2026-05-15T02:53:12.365Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":248}
+[2026-05-15T02:53:15.405Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":277}
+[2026-05-15T02:53:18.399Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":261}
+[2026-05-15T02:53:21.404Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":260}
+[2026-05-15T02:53:24.414Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":261}
+[2026-05-15T02:53:27.463Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":294}
+[2026-05-15T02:53:30.458Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":284}
+[2026-05-15T02:53:33.426Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":249}
+[2026-05-15T02:53:36.451Z] [TRACE] [WebSocket] PM2 Telemetry sent | {"durationMs":266}
+[2026-05-15T02:53:38.602Z] [TRACE] [Server] [STATIC] GET /strategy.html - 200 (1ms)
+[2026-05-15T02:53:38.606Z] [INFO] [WebSocket] Browser disconnected from Telemetry Bridge
+[2026-05-15T02:53:38.615Z] [TRACE] [Server] [STATIC] GET /strategy.css - 200 (1ms)
+[2026-05-15T02:53:38.618Z] [TRACE] [Server] [STATIC] GET /frontend_src/shared_header.ts - 200 (3ms)
+[2026-05-15T02:53:38.645Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy.ts - 200 (30ms)
+[2026-05-15T02:53:38.649Z] [TRACE] [Server] [STATIC] GET /frontend_src/state_manager.ts - 200 (34ms)
+[2026-05-15T02:53:38.684Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel_renderer.ts - 200 (9ms)
+[2026-05-15T02:53:38.698Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/context_menu.ts - 200 (23ms)
+[2026-05-15T02:53:38.703Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/voice.ts - 200 (28ms)
+[2026-05-15T02:53:38.708Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/data.ts - 200 (32ms)
+[2026-05-15T02:53:38.714Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/monitor.ts - 200 (38ms)
+[2026-05-15T02:53:38.718Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/state.ts - 200 (34ms)
+[2026-05-15T02:53:38.722Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/logger.ts - 200 (19ms)
+[2026-05-15T02:53:38.725Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/training.ts - 200 (21ms)
+[2026-05-15T02:53:38.728Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/sentinel.ts - 200 (19ms)
+[2026-05-15T02:53:38.737Z] [TRACE] [Server] [STATIC] GET /frontend_src/strategy/renderer.ts - 200 (22ms)
+[2026-05-15T02:53:38.856Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:53:38.856Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (0ms)
+[2026-05-15T02:53:43.885Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:53:43.886Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)
+[2026-05-15T02:53:48.872Z] [DEBUG] [Server] [REQUEST] GET /api/healthcheck
+[2026-05-15T02:53:48.873Z] [INFO] [Server] [RESPONSE] GET /api/healthcheck - 200 (1ms)

@@ -1,0 +1,26 @@
+{
+  "name": "asker-motoru-hud",
+  "version": "1.0.0",
+  "main": "electron_main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.frontend.json",
+    "start": "electron -r ts-node/register electron_main.js"
+  },
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
+    "dotenv": "^17.4.2",
+    "pg": "^8.20.0",
+    "puppeteer": "^24.43.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "ws": "^8.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.8.0",
+    "@types/pg": "^8.20.0",
+    "@types/ws": "^8.18.1",
+    "electron": "^42.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

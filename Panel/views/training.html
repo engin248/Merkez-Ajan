@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRONOS — Ajan Eğitimi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="strategy.css">
+    <style>
+        body { cursor:default; }
+
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.08); border-radius:4px; }
+        ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.15); }
+
+        /* Left sidebar */
+        .train-sidebar {
+            position:fixed; top:48px; left:0; bottom:0; width:240px; z-index:10;
+            background:#13132a; border-right:1px solid rgba(255,255,255,0.06);
+            display:flex; flex-direction:column;
+        }
+        .ts-header {
+            padding:14px 14px 10px;
+            border-bottom:1px solid rgba(255,255,255,0.06);
+        }
+        .ts-title { font:600 10px 'Inter'; color:rgba(255,255,255,0.3); letter-spacing:1px; text-transform:uppercase; }
+        .ts-list { flex:1; overflow-y:auto; padding:6px; }
+        .ts-empty { padding:20px 10px; font:400 11px 'Inter'; color:rgba(255,255,255,0.08); line-height:1.7; text-align:center; }
+
+        .ts-card {
+            padding:10px 10px; border-radius:8px; margin-bottom:3px; cursor:pointer;
+            background:transparent; border:1px solid transparent;
+            transition:all 0.12s; display:flex; align-items:center; gap:8px;
+        }
+        .ts-card:hover { background:rgba(255,255,255,0.03); }
+        .ts-card.active { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.08); }
+        .ts-card-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+        .ts-card-info { flex:1; min-width:0; }
+        .ts-card-name { font:600 11px 'Inter'; color:rgba(255,255,255,0.7); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .ts-card.active .ts-card-name { color:#fff; }
+        .ts-card-sub { font:400 9px 'JetBrains Mono'; color:rgba(255,255,255,0.2); margin-top:1px; }
+
+        /* Canvas */
+        #trainCanvas { position:fixed; top:48px; left:240px; right:0; bottom:0; z-index:1; }
+
+        /* FAB */
+        .fab-btn {
+            position:fixed; bottom:24px; right:24px; z-index:15;
+            width:52px; height:52px; border-radius:50%; cursor:pointer;
+            background:linear-gradient(135deg, #6366f1, #8b5cf6);
+            border:none; display:flex; align-items:center; justify-content:center;
+            font-size:28px; color:#fff; transition:all 0.15s;
+            box-shadow:0 4px 24px rgba(99,102,241,0.3);
+        }
+        .fab-btn:hover { transform:scale(1.1); box-shadow:0 6px 32px rgba(99,102,241,0.45); }
+
+        /* Picker */
+        .picker-overlay { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,0.4); display:none; }
+        .picker-overlay.open { display:flex; align-items:flex-start; justify-content:flex-end; padding:60px 16px; }
+
+        .picker-panel {
+            width:300px; max-height:calc(100vh - 100px);
+            background:#1e1e30; border:1px solid rgba(255,255,255,0.08);
+            border-radius:12px; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.5);
+        }
+        .pp-header {
+            padding:14px 16px; border-bottom:1px solid rgba(255,255,255,0.06);
+            display:flex; justify-content:space-between; align-items:center;
+        }
+        .pp-title { font:600 13px 'Inter'; color:rgba(255,255,255,0.85); }
+        .pp-close { cursor:pointer; color:rgba(255,255,255,0.3); font-size:18px; padding:4px; }
+        .pp-close:hover { color:#fff; }
+        .pp-body { overflow-y:auto; max-height:calc(100vh - 180px); padding:6px 8px; }
+        .pp-cat { font:600 10px 'Inter'; color:rgba(255,255,255,0.2); letter-spacing:0.5px; padding:12px 8px 6px; text-transform:uppercase; }
+        .pp-item {
+            display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px;
+            cursor:pointer; transition:all 0.1s;
+        }
+        .pp-item:hover { background:rgba(255,255,255,0.05); }
+        .pp-item-icon {
+            width:36px; height:36px; border-radius:10px; display:flex; align-items:center;
+            justify-content:center; flex-shrink:0;
+        }
+        .pp-item-label { font:500 13px 'Inter'; }
+
+        /* Node settings modal */
+        .node-modal-overlay { position:fixed; inset:0; z-index:60; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; }
+        .node-modal-overlay.open { display:flex; }
+        .node-modal {
+            width:360px; background:#1a1a2e; border:1px solid rgba(255,255,255,0.1);
+            border-radius:14px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.6);
+        }
+        .nm-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:16px 18px; border-bottom:1px solid rgba(255,255,255,0.06);
+        }
+        .nm-header-left { display:flex; align-items:center; gap:10px; }
+        .nm-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+        .nm-title { font:600 14px 'Inter'; color:#fff; }
+        .nm-close { cursor:pointer; color:rgba(255,255,255,0.3); font-size:18px; padding:4px; }
+        .nm-close:hover { color:#fff; }
+        .nm-body { padding:16px 18px; }
+        .nm-field { margin-bottom:14px; }
+        .nm-label { font:500 10px 'Inter'; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+        .nm-input {
+            width:100%; padding:9px 12px; font:400 13px 'Inter'; color:#fff;
+            background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+            border-radius:8px; outline:none; box-sizing:border-box;
+        }
+        .nm-input:focus { border-color:rgba(139,92,246,0.4); }
+        .nm-textarea { resize:vertical; min-height:60px; font-family:'Inter'; }
+        .nm-footer { padding:12px 18px; border-top:1px solid rgba(255,255,255,0.06); display:flex; gap:8px; justify-content:flex-end; }
+        .nm-btn {
+            padding:8px 18px; border-radius:8px; font:500 12px 'Inter'; cursor:pointer; border:none;
+        }
+        .nm-btn-del { background:rgba(239,68,68,0.1); color:#ef4444; }
+        .nm-btn-del:hover { background:rgba(239,68,68,0.2); }
+        .nm-btn-save { background:rgba(139,92,246,0.15); color:#a78bfa; }
+        .nm-btn-save:hover { background:rgba(139,92,246,0.25); }
+
+        /* Connection delete tooltip */
+        .conn-del-btn {
+            position:fixed; z-index:20; width:22px; height:22px; border-radius:50%;
+            background:rgba(239,68,68,0.8); color:#fff; font-size:12px; font-weight:700;
+            display:flex; align-items:center; justify-content:center; cursor:pointer;
+            border:1px solid rgba(239,68,68,0.5); box-shadow:0 2px 8px rgba(0,0,0,0.4);
+            transition:all 0.1s;
+        }
+        .conn-del-btn:hover { transform:scale(1.2); background:rgba(239,68,68,1); }
+
+        /* Start training button */
+        .ts-footer { padding:10px; border-top:1px solid rgba(255,255,255,0.06); }
+        .ts-start-btn {
+            width:100%; padding:10px 0; border-radius:8px; border:none; cursor:pointer;
+            background:linear-gradient(135deg, #6366f1, #8b5cf6);
+            color:#fff; font:600 12px 'Inter'; letter-spacing:0.5px;
+            display:flex; align-items:center; justify-content:center; gap:6px;
+            transition:all 0.15s; box-shadow:0 2px 12px rgba(99,102,241,0.25);
+        }
+        .ts-start-btn:hover { transform:translateY(-1px); box-shadow:0 4px 20px rgba(99,102,241,0.4); }
+        .ts-start-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; }
+        .ts-start-btn svg { width:14px; height:14px; }
+
+        /* Modal select */
+        .nm-select {
+            width:100%; padding:9px 12px; font:400 13px 'Inter'; color:#fff;
+            background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+            border-radius:8px; outline:none; box-sizing:border-box;
+            appearance:none; cursor:pointer;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat:no-repeat; background-position:right 10px center;
+        }
+        .nm-select:focus { border-color:rgba(139,92,246,0.4); }
+        .nm-select option { background:#1a1a2e; color:#fff; }
+        .nm-divider { height:1px; background:rgba(255,255,255,0.06); margin:16px 0; }
+        .nm-section-title { font:600 10px 'Inter'; color:rgba(139,92,246,0.5); letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; }
+        .nm-toggle-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; }
+        .nm-toggle-label { font:400 12px 'Inter'; color:rgba(255,255,255,0.5); }
+        .nm-toggle { width:36px; height:20px; border-radius:10px; border:none; cursor:pointer; position:relative;
+            background:rgba(255,255,255,0.08); transition:background 0.2s;
+        }
+        .nm-toggle.on { background:rgba(139,92,246,0.5); }
+        .nm-toggle::after { content:''; position:absolute; top:2px; left:2px; width:16px; height:16px;
+            border-radius:50%; background:#fff; transition:transform 0.2s;
+        }
+        .nm-toggle.on::after { transform:translateX(16px); }
+
+        /* Agent modal wider */
+        .node-modal.agent-modal { width:420px; max-height:80vh; }
+        .node-modal.agent-modal .nm-body { overflow-y:auto; max-height:calc(80vh - 120px); }
+
+        /* Console */
+        .train-console {
+            position:fixed; bottom:24px; left:264px; right:100px; height:180px; z-index:10;
+            background:rgba(10,10,25,0.85); backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,0.08); border-radius:12px;
+            display:flex; flex-direction:column; overflow:hidden;
+            box-shadow:0 8px 32px rgba(0,0,0,0.4);
+            transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .train-console.collapsed { height:36px; bottom:12px; }
+        .tc-header {
+            padding:8px 14px; background:rgba(255,255,255,0.03);
+            border-bottom:1px solid rgba(255,255,255,0.05);
+            display:flex; align-items:center; justify-content:space-between; cursor:pointer;
+        }
+        .tc-title { font:600 10px 'JetBrains Mono'; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:8px; }
+        .tc-title-dot { width:6px; height:6px; border-radius:50%; background:#10b981; box-shadow:0 0 8px #10b981; }
+        .tc-controls { display:flex; gap:12px; align-items:center; }
+        .tc-btn { cursor:pointer; color:rgba(255,255,255,0.2); font-size:12px; transition:color 0.2s; }
+        .tc-btn:hover { color:#fff; }
+        .tc-body {
+            flex:1; overflow-y:auto; padding:8px 12px; font:400 11px 'JetBrains Mono';
+            display:flex; flex-direction:column; gap:4px;
+        }
+        .log-entry { display:flex; gap:8px; line-height:1.4; white-space:pre-wrap; }
+        .log-time { color:rgba(255,255,255,0.15); flex-shrink:0; }
+        .log-level { font-weight:700; flex-shrink:0; min-width:45px; }
+        .log-module { color:rgba(139,92,246,0.6); flex-shrink:0; }
+        .log-msg { color:rgba(255,255,255,0.7); flex:1; }
+        
+        .level-TRACE { color:rgba(255,255,255,0.2); }
+        .level-DEBUG { color:#22d3ee; }
+        .level-INFO { color:#34d399; }
+        .level-WARN { color:#fbbf24; }
+        .level-ERROR { color:#f87171; }
+    </style>
+</head>
+<body>
+    <header class="topbar" id="mainTopbar"></header>
+    <script src="frontend_src/shared_header.ts"></script>
+
+    <aside class="train-sidebar">
+        <div class="ts-header"><div class="ts-title">Ajanlarım</div></div>
+        <div class="ts-list" id="agentList">
+            <div class="ts-empty" id="emptyMsg">Henüz ajan yok.<br>+ ile ajan ekleyin.</div>
+        </div>
+        <div class="ts-footer">
+            <button class="ts-start-btn" id="startTrainBtn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Eğitime Başla
+            </button>
+        </div>
+    </aside>
+
+    <canvas id="trainCanvas"></canvas>
+    <div class="fab-btn" id="fabBtn" title="Düğüm Ekle">+</div>
+
+    <div class="train-console" id="trainConsole">
+        <div class="tc-header" id="tcHeader">
+            <div class="tc-title">
+                <div class="tc-title-dot"></div>
+                KOMUTA MERKEZİ LOGLARI
+            </div>
+            <div class="tc-controls">
+                <span class="tc-btn" id="tcClear" title="Temizle">Temizle</span>
+                <span class="tc-btn" id="tcToggle" title="Gizle/Göster">_</span>
+            </div>
+        </div>
+        <div class="tc-body" id="tcBody">
+            <div class="log-entry">
+                <span class="log-time">00:00:00</span>
+                <span class="log-level level-INFO">INFO</span>
+                <span class="log-module">[SYSTEM]</span>
+                <span class="log-msg">Konsol hazır. Loglar bekleniyor...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="picker-overlay" id="pickerOverlay">
+        <div class="picker-panel">
+            <div class="pp-header">
+                <span class="pp-title">Düğüm Ekle</span>
+                <span class="pp-close" id="pickerClose">✕</span>
+            </div>
+            <div class="pp-body" id="pickerBody"></div>
+        </div>
+    </div>
+
+    <!-- Node settings modal -->
+    <div class="node-modal-overlay" id="nodeModalOverlay">
+        <div class="node-modal" id="nodeModal">
+            <div class="nm-header">
+                <div class="nm-header-left">
+                    <div class="nm-icon" id="nmIcon"></div>
+                    <span class="nm-title" id="nmTitle"></span>
+                </div>
+                <span class="nm-close" id="nmClose">✕</span>
+            </div>
+            <div class="nm-body">
+                <div class="nm-field">
+                    <div class="nm-label">İsim</div>
+                    <input class="nm-input" id="nmName" placeholder="Düğüm adı">
+                </div>
+                <div class="nm-field">
+                    <div class="nm-label">Açıklama</div>
+                    <textarea class="nm-input nm-textarea" id="nmDesc" placeholder="Notlar..."></textarea>
+                </div>
+
+                <!-- Agent-specific fields -->
+                <div id="agentFields" style="display:none">
+                    <div class="nm-divider"></div>
+                    <div class="nm-section-title">◉ Dil Modeli</div>
+                    <div class="nm-field">
+                        <div class="nm-label">Model</div>
+                        <select class="nm-select" id="nmModel">
+                            <option value="gpt-4o">GPT-4o</option>
+                            <option value="gpt-4o-mini">GPT-4o Mini</option>
+                            <option value="gpt-3.5">GPT-3.5 Turbo</option>
+                            <option value="claude-3.5">Claude 3.5 Sonnet</option>
+                            <option value="claude-3-opus">Claude 3 Opus</option>
+                            <option value="gemini-2.0">Gemini 2.0 Flash</option>
+                            <option value="llama-3">Llama 3 (Yerel)</option>
+                            <option value="mistral">Mistral (Yerel)</option>
+                        </select>
+                    </div>
+
+                    <div class="nm-divider"></div>
+                    <div class="nm-section-title">◉ Rol Tanımı</div>
+                    <div class="nm-field">
+                        <div class="nm-label">System Prompt</div>
+                        <textarea class="nm-input nm-textarea" id="nmRole" placeholder="Bu ajanın rolü ve görev tanımı..." style="min-height:80px"></textarea>
+                    </div>
+
+                    <div class="nm-divider"></div>
+                    <div class="nm-section-title">◉ Hafıza Ayarları</div>
+                    <div class="nm-toggle-row">
+                        <span class="nm-toggle-label">Uzun Süreli Hafıza</span>
+                        <button class="nm-toggle" id="nmMemory" type="button"></button>
+                    </div>
+                    <div class="nm-toggle-row">
+                        <span class="nm-toggle-label">Konuşma Geçmişi</span>
+                        <button class="nm-toggle on" id="nmHistory" type="button"></button>
+                    </div>
+                    <div class="nm-field" style="margin-top:8px">
+                        <div class="nm-label">Maks. Token</div>
+                        <input class="nm-input" id="nmMaxTokens" type="number" value="4096" placeholder="4096">
+                    </div>
+                </div>
+
+                <!-- Non-agent URL field -->
+                <div id="sourceFields">
+                    <div class="nm-field">
+                        <div class="nm-label">URL / Kaynak</div>
+                        <input class="nm-input" id="nmUrl" placeholder="https://...">
+                    </div>
+                </div>
+            </div>
+            <div class="nm-footer">
+                <button class="nm-btn nm-btn-del" id="nmDelete">Sil</button>
+                <button class="nm-btn nm-btn-save" id="nmSave">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="frontend_src/state_manager.ts"></script>
+    <script type="module" src="frontend_src/training.ts"></script>
+</body>
+</html>

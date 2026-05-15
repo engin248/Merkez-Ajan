@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASKER MOTORU // AI COMMAND CENTER</title>
+    <link rel="stylesheet" href="home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=JetBrains+Mono:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- SCAN LINE OVERLAY -->
+    <div class="scanline"></div>
+
+    <!-- TOP NAVIGATION -->
+    <nav class="top-nav">
+        <div class="nav-tabs">
+            <a href="/" class="tab active">ARMOR</a>
+            <a href="/strategy.html" class="tab">OPERASYON</a>
+            <a href="/map.html" class="tab">MAP</a>
+            <a href="#" class="tab" onclick="toggleKurulMasasi()">KURUL</a>
+            <a href="/training.html" class="tab">AJAN EĞİTİMİ</a>
+        </div>
+        <div class="nav-right">
+            <a href="/chat" class="tab komuta-link">KOMUTA</a>
+            <div class="indicator green"></div>
+            <div class="indicator red"></div>
+        </div>
+    </nav>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+
+
+
+        <!-- ═══ CENTER: TITLE + BRAIN ═══ -->
+        <div class="center-area">
+            <h1 class="main-title" id="mainTitle">ASKER MOTORU // AI COMMAND CENTER</h1>
+
+            <!-- ═══ FLOATING TELEMETRY HUD PANELS ═══ -->
+            
+            <!-- LEFT TELEMETRY PANEL -->
+            <div class="hud-telemetry hud-left">
+                <div class="hud-panel-header">
+                    <span class="hud-dot green"></span> NEURAL TELEMETRY
+                </div>
+                <div class="hud-data-row">
+                    <span class="hud-label">SYNC RATE</span>
+                    <span class="hud-value" id="hudSync">98.7%</span>
+                </div>
+                <div class="hud-data-row">
+                    <span class="hud-label">NEURAL LOAD</span>
+                    <span class="hud-value" id="hudNeural">NOMINAL</span>
+                </div>
+                <div class="hud-data-row">
+                    <span class="hud-label">DATA IN/s</span>
+                    <span class="hud-value cyan" id="hudDataIn">2.4 TB</span>
+                </div>
+                <div class="hud-data-row">
+                    <span class="hud-label">THREAT LVL</span>
+                    <span class="hud-value green" id="hudThreat">MINIMAL</span>
+                </div>
+                <div class="hud-minibar">
+                    <div class="hud-minibar-fill" id="hudBar1" style="width:87%"></div>
+                </div>
+                <div class="hud-data-stream" id="hudStreamLeft"></div>
+            </div>
+
+            <!-- ═══ HOLOGRAPHIC WORLD GLOBE ═══ -->
+            <div class="holo-globe-container" id="holoGlobeContainer">
+                <canvas id="holoGlobeCanvas" width="180" height="180"></canvas>
+                <div class="globe-label">GLOBAL DATA FEED</div>
+                <div class="globe-status">
+                    <span class="hud-dot green"></span>
+                    <span id="globeNodeCount">142 NODES</span>
+                </div>
+            </div>
+
+            <!-- RIGHT TELEMETRY PANEL -->
+            <div class="hud-telemetry hud-right">
+                <div class="hud-panel-header">
+                    <span class="hud-dot cyan"></span> COGNITIVE METRICS
+                </div>
+                <div class="hud-data-row">
+                    <span class="hud-label">MEMORY</span>
+                    <span class="hud-value" id="hudMemory">14.2 GB</span>
+                </div>
+                <div class="hud-data-row">
+                    <span class="hud-label">PROC QUEUE</span>
+                    <span class="hud-value cyan" id="hudQueue">7 OPS</span>
+                </div>
+                <div class="hud-data-row">
+                    <span class="hud-label">LATENCY</span>
+                    <span class="hud-value green" id="hudLatency">12ms</span>
+                </div>
+                <div class="hud-data-row">
+                    <span class="hud-label">INTEGRITY</span>
+                    <span class="hud-value" id="hudInteg">100%</span>
+                </div>
+                <div class="hud-minibar">
+                    <div class="hud-minibar-fill cyan-bar" id="hudBar2" style="width:92%"></div>
+                </div>
+                <div class="hud-data-stream" id="hudStreamRight"></div>
+            </div>
+
+            <div class="hex-container">
+                <!-- SVG Hex Frame -->
+                <svg class="hex-svg" viewBox="0 0 500 500" preserveAspectRatio="xMidYMid meet">
+                    <!-- Outer hex -->
+                    <polygon points="250,15 465,140 465,360 250,485 35,360 35,140" class="hex-outer"/>
+                    <!-- Inner hex (thinner) -->
+                    <polygon points="250,40 440,150 440,350 250,460 60,350 60,150" class="hex-inner"/>
+                    <!-- Beam lines from center -->
+                    <line x1="250" y1="250" x2="250" y2="15" class="beam"/>
+                    <line x1="250" y1="250" x2="465" y2="140" class="beam"/>
+                    <line x1="250" y1="250" x2="465" y2="360" class="beam"/>
+                    <line x1="250" y1="250" x2="250" y2="485" class="beam"/>
+                    <line x1="250" y1="250" x2="35" y2="360" class="beam"/>
+                    <line x1="250" y1="250" x2="35" y2="140" class="beam"/>
+                    <!-- Corner bolts -->
+                    <circle cx="250" cy="15" r="10" class="bolt"/>
+                    <circle cx="465" cy="140" r="10" class="bolt"/>
+                    <circle cx="465" cy="360" r="10" class="bolt"/>
+                    <circle cx="250" cy="485" r="10" class="bolt"/>
+                    <circle cx="35" cy="360" r="10" class="bolt"/>
+                    <circle cx="35" cy="140" r="10" class="bolt"/>
+                    <!-- Inner bolt rings -->
+                    <circle cx="250" cy="15" r="6" class="bolt-inner"/>
+                    <circle cx="465" cy="140" r="6" class="bolt-inner"/>
+                    <circle cx="465" cy="360" r="6" class="bolt-inner"/>
+                    <circle cx="250" cy="485" r="6" class="bolt-inner"/>
+                    <circle cx="35" cy="360" r="6" class="bolt-inner"/>
+                    <circle cx="35" cy="140" r="6" class="bolt-inner"/>
+                </svg>
+                <!-- Electric Effects Canvas -->
+                <canvas id="electricCanvas" class="electric-canvas"></canvas>
+                <!-- Brain Vein/Blood Flow Canvas -->
+                <canvas id="brainVeinCanvas" class="brain-vein-canvas"></canvas>
+                
+                <!-- ORBITING DATA RING -->
+                <div class="data-orbit-ring" id="dataOrbitRing">
+                    <!-- JS ile hex kodlar enjekte edilecek -->
+                </div>
+                
+                <!-- DATA RAIN PARTICLES -->
+                <div class="data-rain-container" id="dataRainContainer"></div>
+
+                <!-- ═══ NEURAL CONSTELLATION (7 AI MODEL NODES) ═══ -->
+                <svg class="neural-constellation-svg" id="neuralConstellationSvg" preserveAspectRatio="xMidYMid meet"></svg>
+                <div class="neural-constellation" id="neuralConstellation">
+                    <!-- JS ile 7 model düğümü enjekte edilecek -->
+                </div>
+
+                <!-- Neural Pulse Rings -->
+                <div class="neural-pulse-rings">
+                    <div class="pulse-ring ring-1"></div>
+                    <div class="pulse-ring ring-2"></div>
+                    <div class="pulse-ring ring-3"></div>
+                </div>
+                <!-- Brain image -->
+                <div class="brain-wrap">
+                    <img src="assets/brain_holo.png" alt="Neural Core" class="brain-img">
+                </div>
+            </div>
+
+            <!-- Ses Efekti (Konuşma Visualizer) -->
+            <div class="center-voice-visualizer" id="centerVoiceVisualizer">
+                <!-- Javascript ile 41 adet ince siber çubuk enjekte edilecek -->
+            </div>
+
+            <!-- ═══ HOLOGRAPHIC SUBTITLE BAR ═══ -->
+            <div class="holo-subtitle" id="holoSubtitle">
+                <div class="holo-subtitle-bracket left">[</div>
+                <div class="holo-subtitle-text" id="holoSubtitleText"></div>
+                <div class="holo-subtitle-bracket right">]</div>
+                <div class="holo-subtitle-cursor" id="holoSubtitleCursor">▋</div>
+            </div>
+
+            <!-- ═══ SOUND WAVE BURST (Radial rings when AI speaks) ═══ -->
+            <div class="sound-burst-container" id="soundBurstContainer"></div>
+
+        </div>
+    </div>
+
+    <!-- ═══ BOTTOM: ARMOR LAYERS ═══ -->
+    <div class="armor-section">
+        <div class="armor-title">ARMOR LAYERS</div>
+        <div class="armor-grid" id="armorGrid"></div>
+    </div>
+
+    <!-- ═══ KURUL MASASI OVERLAY ═══ -->
+    <div id="kurulOverlay" style="display:none; position:fixed; top:70px; left:5%; right:5%; bottom:5%; z-index:9999; background:#121212; border:2px solid #ff9800; border-radius:12px; box-shadow: 0 0 40px rgba(255,152,0,0.5);">
+        <div style="display:flex; justify-content:space-between; padding:10px 20px; background:#1e1e1e; border-bottom:1px solid #ff9800; border-radius:12px 12px 0 0;">
+            <span style="color:#ff9800; font-family:'Orbitron', sans-serif; font-weight:bold; font-size:18px;">🛡️ ANA KARARGAH KURUL MASASI EKRANI</span>
+            <button onclick="toggleKurulMasasi()" style="background:#ff9800; color:#121212; border:none; padding:5px 15px; font-weight:bold; cursor:pointer; border-radius:4px;">KAPAT</button>
+        </div>
+        <iframe src="http://localhost:8095" style="width:100%; height:calc(100% - 46px); border:none; border-radius:0 0 12px 12px;"></iframe>
+    </div>
+
+    <script>
+        function toggleKurulMasasi() {
+            const overlay = document.getElementById('kurulOverlay');
+            overlay.style.display = overlay.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+    <!-- ═══ VOICE CHAT (Inline — No Overlay) ═══ -->
+    <div class="voice-inline" id="voiceInline">
+        <select id="modelSelector" class="model-select" style="background: rgba(6,12,22,0.92); color: #ff4444; border: 1px solid rgba(255,68,68,0.3); padding: 5px; border-radius: 4px; font-family: var(--mono); font-size: 11px; outline: none; margin-bottom: 5px; box-shadow: 0 0 10px rgba(255,68,68,0.2);">
+            <option value="qwen3:8b">Qwen 3 (Merkez)</option>
+            <option value="gemma4">Gemma 4 (Kod/Mantık)</option>
+            <option value="qwen3.5">Qwen 3.5 (Analitik)</option>
+            <option value="kimi-k2.5:cloud">Kimi k2.5 (Derin Araştırma)</option>
+            <option value="qwen3.5:cloud">Qwen 3.5 Cloud (Genel Operasyon)</option>
+            <option value="glm-5.1:cloud">GLM 5.1 (Strateji)</option>
+            <option value="minimax-m2.7:cloud">MiniMax (Hızlı Yanıt)</option>
+        </select>
+        
+        <div class="voice-info" id="voiceInfo">
+            <div class="voice-info-status" id="voiceStatus">HAZIR</div>
+            <div class="voice-info-text" id="voiceTranscript"></div>
+        </div>
+        <button id="voiceBtn" class="voice-trigger" title="Sesli Sohbet">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+        </button>
+    </div>
+
+    <script src="state_manager.js?v=2"></script>
+    <script src="home.js?v=2"></script>
+</body>
+</html>

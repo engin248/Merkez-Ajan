@@ -1,0 +1,9 @@
+node_modules/
+.venv/
+.chat_state.json
+.env
+__pycache__/
+*.pyc
+*.wav
+*.ogg
+package-lock.json
