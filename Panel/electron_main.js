@@ -1,7 +1,9 @@
-const { app, BrowserWindow, globalShortcut, shell, session } = require('electron');
+const { app, BrowserWindow, globalShortcut, shell, session, ipcMain } = require('electron');
 const path = require('path');
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
+const IS_DEV = !app.isPackaged;
 
 let mainWindow = null;
 
@@ -12,8 +14,9 @@ function createWindow() {
         frame: true,
         autoHideMenuBar: true,
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
         }
     });
 
@@ -23,7 +26,10 @@ function createWindow() {
     setTimeout(() => {
         if (mainWindow) {
             mainWindow.loadURL('http://localhost:8085');
-            mainWindow.webContents.openDevTools();
+            // DevTools sadece geliştirme modunda açılır
+            if (IS_DEV) {
+                mainWindow.webContents.openDevTools();
+            }
         }
     }, 1500);
 
@@ -51,13 +57,37 @@ function createWindow() {
     });
 }
 
+// IPC Handlers — preload köprüsünden gelen istekler
+ipcMain.on('window-minimize', () => mainWindow?.minimize());
+ipcMain.on('window-maximize', () => {
+    if (mainWindow?.isMaximized()) mainWindow.unmaximize();
+    else mainWindow?.maximize();
+});
+ipcMain.on('window-close', () => mainWindow?.close());
+
 app.whenReady().then(() => {
+    // Güvenlik: Sadece bilinen izinleri kabul et
+    const ALLOWED_PERMISSIONS = [
+        'microphone',        // Sesli komut için
+        'camera',            // Ekran analizi için (gelecek)
+        'midi',              // Ses sistemi
+        'mediaKeySystem',    // Medya kontrolleri
+        'clipboard-read',    // Pano okuma
+        'clipboard-write',   // Pano yazma
+        'notifications',     // Bildirimler
+        'media',             // Medya oynatma
+    ];
+
     session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
-        callback(true);
+        const isAllowed = ALLOWED_PERMISSIONS.includes(permission);
+        if (!isAllowed) {
+            console.log(`[GÜVENLİK] İzin reddedildi: ${permission}`);
+        }
+        callback(isAllowed);
     });
 
     session.defaultSession.setPermissionCheckHandler((webContents, permission) => {
-        return true;
+        return ALLOWED_PERMISSIONS.includes(permission);
     });
 
     createWindow();

@@ -1,6 +1,6 @@
 import { NODES, EDGES } from './data.ts';
 
-const GRAPH_STATE_KEY = 'asker_motoru_graph_state';
+const GRAPH_STATE_KEY = 'asker_motoru_graph_state_v4';
 
 export function saveGraphState() {
   try {
@@ -61,6 +61,74 @@ export function loadGraphState() {
   } catch(e) {
     console.error('[STATE] Yükleme hatası:', e);
     return false;
+  }
+}
+
+export async function fetchAndMergeModules() {
+  try {
+    const res = await fetch('/api/modules');
+    const mods = await res.json();
+    
+    // Save current positions to merge
+    const oldNodes = new Map();
+    NODES.forEach(n => oldNodes.set(n.id, n));
+    
+    // Reset but keep Core and Depot
+    const coreNode = oldNodes.get('core') || { id:'core', label:'ASKER MOTORU', sub:'Merkez Komuta AI', x:0, y:0, r:50, color:'#b800ff', type:'hex', model:'qwen3:8b' };
+    const depotNode = oldNodes.get('depot') || { id:'depot', label:'EĞİTİM HAFIZASI', sub:'Ajan Bellek Merkezi', x:-300, y:200, r:30, color:'#b080ff', type:'depot', parent:'core', info:['MODULE: Training Memory','CAPACITY: 2048 MB','STATUS: LEARNING'] };
+    
+    NODES.length = 0;
+    EDGES.length = 0;
+    
+    coreNode.children = mods.map((m:any) => m.id);
+    NODES.push(coreNode);
+    NODES.push(depotNode);
+    
+    let modAngle = 0;
+    const angleStep = (Math.PI * 2) / Math.max(1, mods.length);
+    const radius = 250;
+    
+    const colors = ['#ff0000', '#25d366', '#00aaff', '#ff9900', '#ff00ff', '#00ffff'];
+    
+    mods.forEach((mod: any, i: number) => {
+        const cColor = colors[i % colors.length];
+        const existMod = oldNodes.get(mod.id);
+        const mx = existMod ? existMod.x : Math.cos(modAngle) * radius;
+        const my = existMod ? existMod.y : Math.sin(modAngle) * radius;
+        
+        NODES.push({
+            id: mod.id,
+            label: mod.name,
+            sub: mod.category,
+            x: mx, y: my, r: 18, color: cColor, type: 'rings', parent: 'core',
+            children: mod.tools.map((t:any) => t.name),
+            info: [`MODULE: ${mod.name}`, 'STATUS: AKTİF']
+        });
+        
+        EDGES.push({ from: 'core', to: mod.id, color: cColor });
+        
+        // Araçlar (Alt düğümler)
+        mod.tools.forEach((tool: any, j: number) => {
+            const existTool = oldNodes.get(tool.name);
+            // Parent'ın etrafında küçük bir çemberde dizelim
+            const toolAngle = modAngle + (j - mod.tools.length/2) * 0.4;
+            const tx = existTool ? existTool.x : mx + Math.cos(toolAngle) * 80;
+            const ty = existTool ? existTool.y : my + Math.sin(toolAngle) * 80;
+            
+            NODES.push({
+                id: tool.name,
+                label: tool.name,
+                x: tx, y: ty, r: 10, color: cColor, type: 'dot', parent: mod.id
+            });
+            EDGES.push({ from: mod.id, to: tool.name, color: cColor });
+        });
+        
+        modAngle += angleStep;
+    });
+    
+    console.log(`[STATE] Dinamik modüller eklendi. Toplam ${NODES.length} düğüm.`);
+  } catch(e) {
+    console.error('[STATE] Modülleri çekerken hata oluştu:', e);
   }
 }
 

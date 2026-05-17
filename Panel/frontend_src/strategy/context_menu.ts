@@ -415,6 +415,105 @@ document.addEventListener('DOMContentLoaded', () => {
   (document.getElementById('addBigNodeBtn') as any)?.addEventListener('click', () => openAddModal('big', 'core'));
   (document.getElementById('addSmallNodeBtn') as any)?.addEventListener('click', () => openAddModal('small', 'core'));
 
+  // ── Module Integrator ──
+  const moduleUploadOverlay = (document.getElementById('moduleUploadOverlay') as any);
+  (document.getElementById('uploadModuleBtn') as any)?.addEventListener('click', () => {
+    if (dropdownWrap) dropdownWrap.classList.remove('open');
+    closeNodeCtx();
+    (document.getElementById('uploadModuleName') as HTMLInputElement).value = '';
+    (document.getElementById('uploadModuleCategory') as HTMLInputElement).value = '';
+    (document.getElementById('uploadModuleFile') as HTMLInputElement).value = '';
+    (document.getElementById('moduleUploadStatus') as HTMLElement).style.display = 'none';
+    moduleUploadOverlay?.classList.add('active');
+  });
+
+  (document.getElementById('cancelUploadModule') as any)?.addEventListener('click', () => {
+    moduleUploadOverlay?.classList.remove('active');
+  });
+
+  (document.getElementById('confirmUploadModule') as any)?.addEventListener('click', async () => {
+    const modName = (document.getElementById('uploadModuleName') as HTMLInputElement).value.trim();
+    const modCat = (document.getElementById('uploadModuleCategory') as HTMLInputElement).value.trim();
+    const fileInput = document.getElementById('uploadModuleFile') as HTMLInputElement;
+
+    if (!modName || !fileInput.files || fileInput.files.length === 0) {
+      alert('Lütfen modül adını girin ve bir .ts/.js dosyası seçin!');
+      return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+      const code = e.target?.result as string;
+      
+      // Kapat eski modali, aç Terminal'i
+      moduleUploadOverlay?.classList.remove('active');
+      const terminalOverlay = document.getElementById('centerLogTerminalOverlay') as HTMLElement;
+      const terminalFeed = document.getElementById('centerLogTerminalFeed') as HTMLElement;
+      const terminalStatus = document.getElementById('centerLogTerminalStatus') as HTMLElement;
+      
+      terminalFeed.innerHTML = '';
+      terminalStatus.textContent = 'Ağ bağlantısı kuruluyor...';
+      terminalOverlay.classList.add('active');
+
+      try {
+        const response = await fetch('http://localhost:8085/api/integrate-module', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, category: modCat, moduleName: modName })
+        });
+
+        if (!response.body) throw new Error("Stream desteklenmiyor");
+
+        const streamReader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        terminalStatus.textContent = 'Yapay Zeka kodunuzu dönüştürüyor, lütfen bekleyin...';
+
+        let done = false;
+        while (!done) {
+          const { value, done: readerDone } = await streamReader.read();
+          done = readerDone;
+          if (value) {
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n').filter(l => l.trim() !== '');
+            for (const line of lines) {
+              try {
+                const data = JSON.parse(line);
+                if (data.type === 'PROGRESS') {
+                  terminalFeed.innerHTML += `<div><span style="color:#00ffaa">➔</span> ${data.message}</div>`;
+                  terminalFeed.scrollTop = terminalFeed.scrollHeight;
+                } else if (data.type === 'DONE') {
+                  terminalStatus.textContent = data.result.success ? 'İşlem Başarılı!' : 'İşlem Tamamlandı (Hatalı)';
+                  terminalStatus.style.color = data.result.success ? '#00ffaa' : '#ff4444';
+                  terminalStatus.style.animation = 'none';
+                  setTimeout(() => terminalOverlay.classList.remove('active'), 4000);
+                } else if (data.type === 'ERROR') {
+                  terminalFeed.innerHTML += `<div style="color:#ff4444"><span style="color:#ff4444">➔ HATA:</span> ${data.message}</div>`;
+                  terminalStatus.textContent = 'Sistem Hatası';
+                  terminalStatus.style.color = '#ff4444';
+                  terminalStatus.style.animation = 'none';
+                }
+              } catch (parseErr) {
+                 // Gelen chunk tam JSON değilse yoksay veya biriktir (basitlik adına atlıyoruz)
+              }
+            }
+          }
+        }
+      } catch (err: any) {
+        terminalFeed.innerHTML += `<div style="color:#ff4444"><span style="color:#ff4444">➔ BAĞLANTI HATASI:</span> ${err.message}</div>`;
+        terminalStatus.textContent = 'Bağlantı koptu';
+        terminalStatus.style.animation = 'none';
+        terminalStatus.style.color = '#ff4444';
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  (document.getElementById('closeLogTerminal') as any)?.addEventListener('click', () => {
+    (document.getElementById('centerLogTerminalOverlay') as HTMLElement).classList.remove('active');
+  });
+
   // ── Context menu add child buttons ──
   (document.getElementById('ctxAddBigChild') as any)?.addEventListener('click', () => {
     if (ctxTargetNode) openAddModal('big', ctxTargetNode.id);

@@ -1,14 +1,14 @@
 export function initVoiceChat() {
-    const triggerBtn = document.getElementById('voiceBtn');
-    const statusEl = document.getElementById('voiceStatus');
-    const transcript = document.getElementById('voiceTranscript');
-    const infoPanel = document.getElementById('voiceInfo');
-    if (!triggerBtn) return;
+    const triggerBtn = document.getElementById('voiceBtn')!;
+    const statusEl = document.getElementById('voiceStatus')!;
+    const transcript = document.getElementById('voiceTranscript')!;
+    const infoPanel = document.getElementById('voiceInfo')!;
+    if (!triggerBtn || !statusEl || !transcript || !infoPanel) return;
 
     let isListening = false;
     let isActive = false;
     let currentState = 'idle';
-    let ollamaAbortController = null;
+    let ollamaAbortController: AbortController | null = null;
 
     function setState(state) {
         currentState = state;
@@ -103,12 +103,23 @@ export function initVoiceChat() {
         };
         recognition.onerror = (event) => {
             console.error("SpeechRecognition error:", event.error);
-            if (event.error === 'network') {
+            if (event.error === 'not-allowed') {
+                alert("Mikrofon izni verilmedi! Lütfen tarayıcınızın adres çubuğundaki kilit simgesine tıklayıp mikrofon izni verin.");
+                stopAll();
+            } else if (event.error === 'network') {
                 transcript.innerHTML += `<div class="ai-said" style="color:#ff4444">STT İnternet Bağlantısı Hatası!</div>`;
                 stopAll();
+            } else if (event.error === 'no-speech') {
+                // Sessizlik algılandığında kapanmasını engellemek için sessizce devam et
+            } else if (event.error === 'aborted') {
+                // Kullanıcı manuel durdurduğunda fırlatılır
             }
         };
-        recognition.onend = () => { if (isListening) recognition.start(); };
+        recognition.onend = () => { 
+            if (isListening) {
+                try { recognition.start(); } catch(e) { console.error("Re-start failed", e); }
+            }
+        };
     }
 
     async function startListening() {
@@ -128,7 +139,7 @@ export function initVoiceChat() {
         transcript.innerHTML = '';
     }
 
-    async function sendToOllama(text) {
+    async function sendToOllama(text: string) {
         setState('processing');
         transcript.innerHTML = `<div class="user-said">Sen: "${text}"</div>`;
         if (ollamaAbortController) ollamaAbortController.abort();
@@ -143,6 +154,7 @@ export function initVoiceChat() {
                 signal: ollamaAbortController.signal
             });
             if (!isActive) return;
+            if (!res.body) return;
             const reader = res.body.getReader();
             const decoder = new TextDecoder("utf-8");
             let fullReply = '';
@@ -174,7 +186,7 @@ export function initVoiceChat() {
             // TTS için HTML etiketlerini temizle
             const cleanText = fullReply.replace(/<[^>]*>/g, '').trim();
             if (cleanText) ttsManager.enqueue(cleanText);
-        } catch (err) {
+        } catch (err: any) {
             if (err.name === 'AbortError') return;
             console.error('Ollama error:', err);
             transcript.innerHTML += `<div class="ai-said" style="color:#ff4444">Bağlantı hatası</div>`;
@@ -182,12 +194,15 @@ export function initVoiceChat() {
         }
     }
 
+    let lastClickTime = 0;
     triggerBtn.addEventListener('click', () => {
+        const now = Date.now();
+        if (now - lastClickTime < 500) return; // 500ms debounce koruması
+        lastClickTime = now;
+        
         if (currentState === 'idle') startListening();
         else stopAll();
     });
-    triggerBtn.addEventListener('dblclick', stopAll);
-    window.speechSynthesis.getVoices();
 }
 
 // initVoiceChat() strategy.ts tarafından açıkça çağrılıyor.

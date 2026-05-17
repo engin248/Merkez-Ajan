@@ -75,7 +75,7 @@ function analyzeScreen(soru: string) {
                                 model: 'minicpm-v',
                                 cozunurluk: '1280x720'
                             });
-                        } catch(e) {
+                        } catch(e: any) {
                             resolve({ basarili: false, hata: 'Vision model yanıt ayrıştırma hatası: ' + e.message });
                         }
                     });

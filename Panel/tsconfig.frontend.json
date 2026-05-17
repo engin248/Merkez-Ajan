@@ -4,7 +4,7 @@
     "module": "es6",
     "outDir": "./public/js",
     "rootDir": "./frontend_src",
-    "strict": false,
+    "strict": true,
     "allowJs": true,
     "sourceMap": false,
     "forceConsistentCasingInFileNames": true,

@@ -51,8 +51,8 @@ body:active { cursor: grabbing; }
     padding: 0 12px; height: 48px;
     background: #1b1b2f;
     border-bottom: 1px solid rgba(255,255,255,0.07);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    /* backdrop-filter GPU yorar, yarı saydam solid renk kullanıldı */
+    background: rgba(15, 20, 35, 0.95);
     overflow: visible;
     gap: 8px;
 }
@@ -212,7 +212,6 @@ body:active { cursor: grabbing; }
     background: rgba(10, 16, 28, 0.95);
     border: 1px solid rgba(0, 212, 255, 0.12);
     border-radius: 10px;
-    backdrop-filter: blur(16px);
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     overflow: hidden;
     animation: dropIn 0.18s ease;
@@ -275,9 +274,8 @@ body:active { cursor: grabbing; }
 .activity-panel {
     position: fixed; top: 0; right: -380px;
     width: 360px; height: 100vh; z-index: 160;
-    background: rgba(8, 12, 24, 0.96);
+    background: rgba(8, 12, 24, 0.98);
     border-left: 1px solid rgba(160,120,255,0.12);
-    backdrop-filter: blur(20px);
     display: flex; flex-direction: column;
     transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: -8px 0 40px rgba(0,0,0,0.4);
@@ -381,7 +379,6 @@ body:active { cursor: grabbing; }
     opacity: 0;
     transform: translateY(5px);
     transition: opacity 0.2s ease, transform 0.2s ease;
-    backdrop-filter: blur(12px);
     box-shadow: 0 0 30px rgba(0, 212, 255, 0.08), 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 .node-tooltip.visible {
@@ -446,7 +443,6 @@ body:active { cursor: grabbing; }
     color: #b080ff;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(10px);
     transition: all 0.3s ease;
     box-shadow: 0 0 20px rgba(160, 120, 255, 0.1), inset 0 0 20px rgba(160, 120, 255, 0.03);
 }
@@ -467,9 +463,8 @@ body:active { cursor: grabbing; }
     width: 400px; height: calc(100vh - 48px);
     z-index: 110;
     display: flex; flex-direction: column;
-    background: linear-gradient(180deg, rgba(8, 12, 24, 0.98) 0%, rgba(6, 10, 20, 0.99) 100%);
+    background: rgba(6, 10, 20, 0.98);
     border-right: 1px solid rgba(160, 120, 255, 0.12);
-    backdrop-filter: blur(24px);
     transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 8px 0 48px rgba(0,0,0,0.5);
 }
@@ -587,6 +582,66 @@ body:active { cursor: grabbing; }
 .agent-dropdown-list::-webkit-scrollbar { width: 4px; }
 .agent-dropdown-list::-webkit-scrollbar-track { background: transparent; }
 .agent-dropdown-list::-webkit-scrollbar-thumb { background: rgba(160,120,255,0.2); border-radius: 4px; }
+
+/* UPLOAD MODAL UTILITIES */
+.modal-warning {
+    border: 1px solid rgba(243,156,18,0.5);
+    box-shadow: 0 0 20px rgba(243,156,18,0.2);
+}
+.modal-warning-title {
+    color: #f39c12;
+}
+.modal-desc {
+    font-size: 11px; color: #888; margin-bottom: 15px;
+}
+.file-input {
+    background: rgba(0,0,0,0.5); color: #fff; padding: 10px;
+    border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 4px;
+    width: 100%; box-sizing: border-box; margin-bottom: 20px; cursor: pointer;
+}
+.btn-warning {
+    background: rgba(243, 156, 18, 0.2); border-color: #f39c12; color: #f39c12;
+}
+.btn-warning:hover {
+    background: rgba(243, 156, 18, 0.3);
+}
+
+/* TERMINAL MODAL UTILITIES */
+.log-terminal-overlay {
+    z-index: 10000;
+}
+.terminal-modal {
+    width: 600px; background: rgba(10, 15, 25, 0.95);
+    border: 1px solid #00d4ff; box-shadow: 0 0 30px rgba(0,212,255,0.2);
+    font-family: 'Courier New', Courier, monospace;
+}
+.terminal-header {
+    display: flex; justify-content: space-between;
+    border-bottom: 1px solid rgba(0,212,255,0.3);
+    padding-bottom: 10px; margin-bottom: 10px;
+}
+.terminal-header h3 {
+    color: #00d4ff; margin:0; font-size:14px; text-shadow: 0 0 5px #00d4ff;
+}
+.terminal-close {
+    color: #888; cursor:pointer; font-size:16px;
+}
+.terminal-close:hover {
+    color: #ff4444;
+}
+.terminal-feed {
+    height: 300px; overflow-y: auto; color: #ccc; font-size: 13px;
+    line-height: 1.5; text-shadow: 0 0 2px rgba(255,255,255,0.2);
+    display: flex; flex-direction: column; gap: 5px;
+}
+.terminal-status {
+    color: #f39c12; font-size: 11px; margin-top: 10px;
+    text-align: right; animation: blink 1.5s infinite;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
 
 /* Grup başlıkları */
 .agent-group-header {
@@ -775,37 +830,47 @@ body:active { cursor: grabbing; }
     color: var(--cyan);
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(10px);
     transition: all 0.3s ease;
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), inset 0 0 20px rgba(0, 212, 255, 0.03);
+    position: relative;
 }
-.voice-trigger svg { width: 22px; height: 22px; }
+/* GPU Dostu Animasyon için sözde eleman */
+.voice-trigger::before {
+    content: '';
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid currentColor;
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.voice-trigger svg { width: 22px; height: 22px; position: relative; z-index: 2; }
 .voice-trigger:hover {
     border-color: var(--cyan);
-    box-shadow: 0 0 30px rgba(0, 212, 255, 0.25), inset 0 0 20px rgba(0, 212, 255, 0.06);
     transform: scale(1.08);
 }
-.voice-trigger.listening {
-    border-color: var(--green);
-    color: var(--green);
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
-    animation: voicePulse 1.5s ease-in-out infinite;
+.voice-trigger:hover::before { opacity: 0.3; transform: scale(1.1); }
+
+.voice-trigger.listening { color: var(--green); }
+.voice-trigger.listening::before {
+    animation: voicePulseGPU 1.5s ease-out infinite;
 }
-.voice-trigger.processing {
-    border-color: var(--orange);
-    color: var(--orange);
-    box-shadow: 0 0 30px rgba(255, 152, 0, 0.3);
-    animation: voicePulse 0.8s ease-in-out infinite;
+
+.voice-trigger.processing { color: var(--orange); }
+.voice-trigger.processing::before {
+    animation: voicePulseGPU 0.8s ease-out infinite;
 }
-.voice-trigger.speaking {
-    border-color: var(--green);
-    color: var(--green);
-    box-shadow: 0 0 40px rgba(0, 255, 136, 0.4);
-    animation: voicePulse 0.5s ease-in-out infinite;
+
+.voice-trigger.speaking { color: var(--green); }
+.voice-trigger.speaking::before {
+    animation: voicePulseGPU 0.5s ease-out infinite;
 }
-@keyframes voicePulse {
-    0%,100% { box-shadow: 0 0 20px currentColor; }
-    50% { box-shadow: 0 0 40px currentColor, 0 0 60px currentColor; }
+
+@keyframes voicePulseGPU {
+    0% { opacity: 0.8; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.4); }
 }
 
 /* ═══ VOICE INFO PANEL ═══ */
@@ -1127,9 +1192,8 @@ body:active { cursor: grabbing; }
 /* ═══ ADD NODE MODAL ═══ */
 .node-modal-overlay {
     position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.85); /* Daha koyu arka plan, blur iptal edildi (GPU tasarrufu) */
     display: none; align-items: center; justify-content: center;
-    backdrop-filter: blur(4px);
 }
 .node-modal-overlay.active { display: flex; }
 .node-modal {

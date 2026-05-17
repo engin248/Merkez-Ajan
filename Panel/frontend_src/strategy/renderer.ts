@@ -14,7 +14,7 @@ export function colorToRgba(hex: string, a: number) {
 }
 
 export function drawMeshCluster(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, color: string, alpha: number, frame: number, zoom: number) {
-  const pts = [];
+  const pts: { x: number, y: number }[] = [];
   const count = 12;
   for (let i = 0; i < count; i++) {
     const a = (i / count) * Math.PI * 2 + frame * 0.003 + Math.sin(frame * 0.01 + i) * 0.3;

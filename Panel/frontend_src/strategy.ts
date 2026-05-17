@@ -30,7 +30,7 @@ const _savedCam = typeof StateManager !== 'undefined' ? StateManager.getCamera()
 let cam: Camera = { x: _savedCam.x, y: _savedCam.y, zoom: _savedCam.zoom, targetZoom: _savedCam.zoom };
 
 import { NODES, EDGES, SKILL_CATALOG } from './strategy/data.ts';
-import { saveGraphState, saveNodePositions, loadGraphState } from './strategy/state.ts';
+import { saveGraphState, saveNodePositions, loadGraphState, fetchAndMergeModules } from './strategy/state.ts';
 import { startMonitoring } from './strategy/monitor.ts';
 import { logActivity, scheduleNextActivity } from './strategy/logger.ts';
 import { agentMemory, startTraining } from './strategy/training.ts';
@@ -44,6 +44,11 @@ import { hexPath, colorToRgba, drawMeshCluster, drawParticleCloud, drawRingsClus
 
 // Sayfa yüklendiğinde kaydedilmiş graph'ı uygula
 loadGraphState();
+
+// Dinamik modülleri arka plandan çek ve graph'ı güncelle
+fetchAndMergeModules().then(() => {
+    saveGraphState(); // Yeni haritayı kaydet
+});
 
 // Başlatma Çağrıları
 startMonitoring();

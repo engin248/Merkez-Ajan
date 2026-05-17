@@ -34,6 +34,10 @@
                 <span class="opt-icon small">●</span>
                 <div class="opt-text"><span class="opt-label">Alt Ajan Ekle</span><span class="opt-desc">Küçük alt düğüm / yetenek</span></div>
               </button>
+              <button class="add-opt" id="uploadModuleBtn">
+                <span class="opt-icon" style="color:#f39c12">☁</span>
+                <div class="opt-text"><span class="opt-label">Modül Entegre Et</span><span class="opt-desc">Dışarıdan .ts kod yükle</span></div>
+              </button>
             </div>
           </div>
           <button class="tb-btn danger" id="deleteNodeBtn" disabled>
@@ -221,6 +225,22 @@
         </div>
     </div>
 
+
+
+    <!-- ═══ CENTRAL LOG TERMINAL (SSE Streaming İçin) ═══ -->
+    <div class="node-modal-overlay log-terminal-overlay" id="centerLogTerminalOverlay">
+        <div class="node-modal terminal-modal">
+            <div class="terminal-header">
+                <h3>> SİSTEM TERMİNALİ_</h3>
+                <span id="closeLogTerminal" class="terminal-close">✕</span>
+            </div>
+            <div id="centerLogTerminalFeed" class="terminal-feed">
+                <!-- Logs will appear here -->
+            </div>
+            <div id="centerLogTerminalStatus" class="terminal-status">Sistem bekleniyor...</div>
+        </div>
+    </div>
+
     <!-- ═══ CHAT SYSTEM ═══ -->
     <button class="chat-trigger" id="chatBtn" title="Ajan Sohbet">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -261,6 +281,13 @@
                     <!-- JS ile doldurulacak -->
                 </div>
             </div>
+        </div>
+        <!-- API ve Local Modeller için Seçici -->
+        <div style="padding: 0 16px 12px 16px; display: flex; align-items: center; gap: 8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <select id="chatOverrideModel" style="flex:1; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 4px; padding: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; outline: none; cursor: pointer;">
+                <option value="default">Varsayılan (Ajanın Modeli)</option>
+            </select>
         </div>
         <!-- Gizli select (uyumluluk) -->
         <select id="chatModelSelect" style="display:none;"></select>
@@ -318,6 +345,7 @@
       const chatTyping = document.getElementById('chatTyping');
       const chatModelSelect = document.getElementById('chatModelSelect');
       const chatModelBadge = document.getElementById('chatModelBadge');
+      const chatOverrideModel = document.getElementById('chatOverrideModel');
 
       // Yeni ajan seçici elemanları
       const agentSelector = document.getElementById('agentSelector');
@@ -367,6 +395,41 @@
         }
         return agentId;
       }
+
+      // ── API ve Yerel Modelleri Yükle ──
+      async function loadAvailableModels() {
+        try {
+          const res = await fetch('/api/models');
+          const data = await res.json();
+          
+          if (data.local && data.local.length > 0) {
+            const group = document.createElement('optgroup');
+            group.label = 'Yerel Ollama Modelleri';
+            data.local.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m;
+              opt.textContent = m;
+              group.appendChild(opt);
+            });
+            chatOverrideModel.appendChild(group);
+          }
+          
+          if (data.api && data.api.length > 0) {
+            const group = document.createElement('optgroup');
+            group.label = 'Bulut / API Modelleri';
+            data.api.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m;
+              opt.textContent = m;
+              group.appendChild(opt);
+            });
+            chatOverrideModel.appendChild(group);
+          }
+        } catch (e) {
+          console.error("Modeller yüklenemedi", e);
+        }
+      }
+      loadAvailableModels();
 
       // ── Ajan bilgilerini al ──
       function getNodeInfo(nodeId) {
@@ -692,7 +755,9 @@
 
         isSending = true;
         chatSend.disabled = true;
-        const model = getSelectedModel();
+        
+        const overrideVal = chatOverrideModel.value;
+        const model = overrideVal === 'default' ? getSelectedModel() : overrideVal;
 
         // Kullanıcı mesajı
         currentMessages.push({ role: 'user', content: text, time: timeStr() });
@@ -788,6 +853,31 @@
       populateAgentSelect();
       selectAgent('core');
       switchAgent();
+
+      // Modelleri yükle
+      fetch('/api/models')
+        .then(r => r.json())
+        .then(data => {
+          const sel = document.getElementById('chatOverrideModel');
+          if (!sel) return;
+          if (data.local && data.local.length) {
+            data.local.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m;
+              opt.textContent = `[Yerel] ${m}`;
+              sel.appendChild(opt);
+            });
+          }
+          if (data.api && data.api.length) {
+            data.api.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m;
+              opt.textContent = `[Bulut] ${m}`;
+              sel.appendChild(opt);
+            });
+          }
+        })
+        .catch(err => console.error('Modeller yüklenemedi:', err));
 
       // Chat içi linkleri varsayılan tarayıcıda aç (Electron + Browser uyumlu)
       chatMessages.addEventListener('click', (e) => {

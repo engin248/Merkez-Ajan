@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as http from 'http';
+import { mouse, keyboard, Point, Button, Key, screen } from '@nut-tree-fork/nut-js';
 
 /**
  * ══════════════════════════════════════════════════════════════
@@ -10,6 +11,9 @@ import * as http from 'http';
  *  Her araç: tanım (Ollama'ya gönderilir) + executor (server çalıştırır)
  * ══════════════════════════════════════════════════════════════
  */
+import { getDynamicToolDefinitions, getFilteredToolDefinitions, executeDynamicTool } from '../modules/registry';
+
+
 
 // ─── GÜVENLİK: Tehlikeli komut filtresi ───
 const BLOCKED_PATTERNS: RegExp[] = [
@@ -31,7 +35,67 @@ export interface ToolResult {
 }
 
 // ─── ARAÇ TANIMLARI (Ollama tools formatı) ───
-export const TOOL_DEFINITIONS = [
+// Core araçları tutarız, ancak export ederken Registry'deki modüllerle birleştiririz.
+const CORE_TOOL_DEFINITIONS = [
+    {
+        type: 'function',
+        function: {
+            name: 'fare_hareket_et',
+            description: 'Fare imlecini ekrandaki belirtilen X ve Y koordinatlarina tasiyarak hareket ettirir.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    x: { type: 'number', description: 'Ekrandaki yatay (X) piksel koordinati' },
+                    y: { type: 'number', description: 'Ekrandaki dikey (Y) piksel koordinati' }
+                },
+                required: ['x', 'y']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'fare_tikla',
+            description: 'Fare ile sol (left), sag (right) veya cift tiklama (double) islemi yapar.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    buton: { type: 'string', description: 'Tiklama turu (left, right, double)', enum: ['left', 'right', 'double'] }
+                },
+                required: ['buton']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'klavye_yaz',
+            description: 'Klavye kullanarak metin yazar ve opsiyonel olarak Enter tusuna basar. Bir arama cubuguna veya text alanina yazi yazmak icin fare_tikla ile o alani sectikten sonra bu araci kullan.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    metin: { type: 'string', description: 'Yazilacak metin' },
+                    enter_bas: { type: 'boolean', description: 'Yazdiktan sonra Enter tusuna basilsin mi?' }
+                },
+                required: ['metin']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'scroll_yap',
+            description: 'Fare tekerlegini (scroll) yukari veya asagi dogru kaydirir.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    yon: { type: 'string', description: 'Kaydirma yonu (up, down)', enum: ['up', 'down'] },
+                    miktar: { type: 'number', description: 'Kaydirma miktari (varsayilan 500)' }
+                },
+                required: ['yon']
+            }
+        }
+    },
     {
         type: 'function',
         function: {
@@ -79,12 +143,11 @@ export const TOOL_DEFINITIONS = [
         type: 'function',
         function: {
             name: 'url_ac',
-            description: 'Varsayilan tarayicida herhangi bir web sitesini veya arama sayfasini acar. Kullanici "YouTube da sarki ac", "Google da ara", "Trendyol da bak", "X sitesini ac" gibi bir sey soylediginde MUTLAKA bu araci kullan. YouTube icin https://www.youtube.com/results?search_query=ARANACAK, Google icin https://www.google.com/search?q=ARANACAK, Trendyol icin https://www.trendyol.com/sr?q=ARANACAK seklinde URL olustur.',
+            description: 'Varsayilan tarayicida verilen web adresini (URL) acar.',
             parameters: {
                 type: 'object',
                 properties: {
-                    url: { type: 'string', description: 'Acilacak web adresi. Ornekler: https://www.youtube.com/results?search_query=central+cee, https://www.google.com/search?q=istanbul+hava+durumu, https://twitter.com, https://www.trendyol.com/sr?q=ayakkabi' },
-                    baslik: { type: 'string', description: 'Opsiyonel. Arama sorgusu metni. Ornek: central cee, istanbul transfer' }
+                    url: { type: 'string', description: 'Acilacak web adresi. Ornekler: https://www.google.com/search?q=istanbul+hava+durumu, https://twitter.com, https://www.trendyol.com/sr?q=ayakkabi' }
                 },
                 required: ['url']
             }
@@ -197,6 +260,29 @@ export const TOOL_DEFINITIONS = [
     }
 ];
 
+export const TOOL_DEFINITIONS = [
+    ...CORE_TOOL_DEFINITIONS,
+    ...getDynamicToolDefinitions() // Dynamic registry'den gelen araçlar (Açıldığında boş olabilir, lazy yükleme daha iyi)
+];
+
+// Otonom ajan her seferinde güncel modül listesini almak isteyeceği için dinamik get fonksiyonu ekliyoruz
+// Eğer allowedCategories verilirse sadece o kategorideki modüller yüklenir, ancak CORE araçlar (Sistem) HER ZAMAN yüklenir.
+export function getActiveToolDefinitions(allowedCategories?: string[]) {
+    if (allowedCategories) {
+        // Router devredeyse
+        return [
+            ...CORE_TOOL_DEFINITIONS,
+            ...getFilteredToolDefinitions(allowedCategories)
+        ];
+    }
+    
+    // Router devrede değilse hepsini getir
+    return [
+        ...CORE_TOOL_DEFINITIONS,
+        ...getDynamicToolDefinitions()
+    ];
+}
+
 // ─── ARAÇ ÇALIŞTIRICILAR ───
 
 function runPowerShell(cmd: string, timeoutMs: number = 15000): Promise<ToolResult> {
@@ -215,6 +301,54 @@ function runPowerShell(cmd: string, timeoutMs: number = 15000): Promise<ToolResu
 }
 
 const EXECUTORS: Record<string, (args: any) => Promise<ToolResult>> = {
+    fare_hareket_et: async (args) => {
+        try {
+            const { x, y } = args;
+            if (x === undefined || y === undefined) return { success: false, error: 'X ve Y koordinatlari gerekli' };
+            console.log(`[TOOL] Fare hareket ediyor: X=${x}, Y=${y}`);
+            mouse.config.mouseSpeed = 1500;
+            await mouse.setPosition(new Point(Math.floor(x), Math.floor(y)));
+            return { success: true, output: `Fare X:${x}, Y:${y} noktasina basariyla tasindi.` };
+        } catch(e: any) { return { success: false, error: e.message }; }
+    },
+    fare_tikla: async (args) => {
+        try {
+            const buton = args.buton || 'left';
+            console.log(`[TOOL] Fare tiklaniyor: ${buton}`);
+            if (buton === 'double') {
+                await mouse.doubleClick(Button.LEFT);
+            } else if (buton === 'right') {
+                await mouse.click(Button.RIGHT);
+            } else {
+                await mouse.click(Button.LEFT);
+            }
+            return { success: true, output: `Fare ${buton} tiklamasi basarili.` };
+        } catch(e: any) { return { success: false, error: e.message }; }
+    },
+    klavye_yaz: async (args) => {
+        try {
+            const { metin, enter_bas } = args;
+            console.log(`[TOOL] Klavye yaziyor: ${metin}`);
+            keyboard.config.autoDelayMs = 20;
+            await keyboard.type(metin);
+            if (enter_bas) {
+                await keyboard.type(Key.Enter);
+                return { success: true, output: `Klavye metni yazdi ve Enter tusuna basti.` };
+            }
+            return { success: true, output: `Klavye metni yazdi.` };
+        } catch(e: any) { return { success: false, error: e.message }; }
+    },
+    scroll_yap: async (args) => {
+        try {
+            const yon = args.yon || 'down';
+            const miktar = args.miktar || 500;
+            console.log(`[TOOL] Scroll: ${yon} ${miktar}`);
+            if (yon === 'up') await mouse.scrollUp(miktar);
+            else await mouse.scrollDown(miktar);
+            return { success: true, output: `Sayfa ${yon} yonunde ${miktar} birim kaydirildi.` };
+        } catch(e: any) { return { success: false, error: e.message }; }
+    },
+
     pc_komutu_calistir: async (args) => {
         const komut = args.komut;
         if (!komut) return { success: false, error: 'Komut belirtilmedi' };
@@ -252,17 +386,8 @@ const EXECUTORS: Record<string, (args: any) => Promise<ToolResult>> = {
 
     url_ac: async (args) => {
         let url = args.url;
+        if (!url) return { success: false, error: 'URL belirtilmedi' };
         if (!url.startsWith('http')) url = 'https://' + url;
-        
-        const ytWatchMatch = url.match(/youtube\.com\/watch\?v=/);
-        if (ytWatchMatch) {
-            const searchQuery = args.baslik || args.sorgu || '';
-            if (searchQuery) {
-                url = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery);
-            } else {
-                return { success: false, error: 'YouTube video ID dogrulanamadi. Lutfen url_ac aracini YouTube arama linki ile kullan' };
-            }
-        }
         
         console.log(`[TOOL] URL aciliyor: ${url}`);
         exec(`start "" "${url}"`);
@@ -428,7 +553,7 @@ const EXECUTORS: Record<string, (args: any) => Promise<ToolResult>> = {
             messages: [
                 {
                     role: 'user',
-                    content: soru + ' Turkce cevap ver. Kisa ve net ol.',
+                    content: soru + ' Eger tiklanabilir bir oge soruluyorsa, onun ekran uzerindeki tahmini X ve Y piksel koordinatlarini (X: [deger], Y: [deger] formatinda) kesinlikle belirt. Turkce cevap ver. Kisa ve net ol.',
                     images: [imageBase64]
                 }
             ],
@@ -545,10 +670,18 @@ const EXECUTORS: Record<string, (args: any) => Promise<ToolResult>> = {
 };
 
 export async function executeTool(name: string, args: any): Promise<ToolResult> {
+    const parsedArgs = typeof args === 'string' ? JSON.parse(args) : args;
+    
+    // Önce Registry'deki yeni modülleri kontrol et
+    const dynamicResult = await executeDynamicTool(name, parsedArgs);
+    if (dynamicResult !== null) {
+        return dynamicResult;
+    }
+
+    // Registry'de yoksa Core executor'lara bak
     const executor = EXECUTORS[name];
     if (!executor) return { success: false, error: `Bilinmeyen arac: ${name}` };
     try {
-        const parsedArgs = typeof args === 'string' ? JSON.parse(args) : args;
         return await executor(parsedArgs);
     } catch (e: any) {
         return { success: false, error: `Arac hatasi: ${e.message}` };

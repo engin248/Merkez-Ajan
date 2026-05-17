@@ -106,8 +106,8 @@ export function addNode(key) {
 
     if (!state.activeAgent) {
         const agId = 'ag_' + Date.now();
-        const ag = { id:agId, name:'Ajan 1', color:'#8b5cf6', nodes:[], conns:[] };
-        ag.nodes.push({ type:'agent', x:0, y:0, label:'Ajan 1', _color:'#8b5cf6', id:'c_'+agId });
+        const ag = { id:agId, name:'Üst Modül', color:'#8b5cf6', nodes:[], conns:[] };
+        ag.nodes.push({ type:'agent', x:0, y:0, label:'Üst Modül', _color:'#8b5cf6', id:'c_'+agId });
         state.agents.push(ag);
         selectAgent(ag);
     }
@@ -121,6 +121,328 @@ export function addNode(key) {
     refreshSidebar();
     saveTrainingState();
 }
+
+function createAgentFromForm() {
+    const agentDef = NODE_DEFS.find(n => n.key === 'agent');
+    const id = 'ag_' + Date.now();
+    const nameInput = document.getElementById('newAgentName') as HTMLInputElement;
+    const modelInput = document.getElementById('newAgentModel') as HTMLSelectElement;
+    const roleInput = document.getElementById('newAgentRole') as HTMLTextAreaElement;
+    const memoryInput = document.getElementById('newAgentMemory');
+    const name = (nameInput?.value || '').trim() || `Ajan ${state.agents.length + 1}`;
+    const model = modelInput?.value || 'gpt-4o';
+    const role = (roleInput?.value || '').trim();
+    const color = agentDef?.color || '#8b5cf6';
+    const ag = { id, name, color, nodes: [], conns: [] };
+
+    ag.nodes.push({
+        type: 'agent',
+        x: 0,
+        y: 0,
+        label: name,
+        _color: color,
+        id: 'c_' + id,
+        _model: model,
+        _role: role,
+        _memory: memoryInput?.classList.contains('on') !== false,
+        _history: true,
+        _maxTokens: 4096,
+        _xp: 0
+    });
+
+    state.agents.push(ag);
+    selectAgent(ag);
+    saveTrainingState();
+    closeNewAgentModal();
+}
+
+let availableTrainingAgents = [];
+let availableTrainingModules = [];
+
+function normalizeTemplateAgent(agent, index) {
+    const name = agent.name || agent.ajan_kodu || agent.agent || agent.module || `Ajan ${index + 1}`;
+    const role = agent.role || agent.training_name || agent.beceri_entegrasyonu || agent.bagli_oldugu_komutan || '';
+    const status = agent.status || agent.statu || agent.statü || agent.durum || 'hazır';
+    return {
+        raw: agent,
+        id: agent.id || agent.ajan_kodu || agent.agent || agent.module || `agent_${index + 1}`,
+        name,
+        role,
+        status,
+        model: agent.model || agent._model || 'qwen2.5:latest',
+        meta: [
+            status,
+            agent.bagli_oldugu_komutan ? `komutan: ${agent.bagli_oldugu_komutan}` : '',
+            agent.source || agent.memory_file || agent.training_department || '',
+        ].filter(Boolean).join(' · '),
+    };
+}
+
+function createAgentFromTemplate(template) {
+    const agentDef = NODE_DEFS.find(n => n.key === 'agent');
+    const id = 'ag_' + Date.now();
+    const color = agentDef?.color || '#8b5cf6';
+    const role = [
+        template.role,
+        template.raw?.beceri_entegrasyonu ? `Beceri entegrasyonu: ${template.raw.beceri_entegrasyonu}` : '',
+        template.raw?.source ? `Kaynak: ${template.raw.source}` : '',
+    ].filter(Boolean).join('\n');
+    const ag = { id, name: template.name, color, nodes: [], conns: [] };
+    ag.nodes.push({
+        type: 'agent',
+        x: 0,
+        y: 0,
+        label: template.name,
+        _color: color,
+        id: 'c_' + id,
+        _model: template.model,
+        _role: role,
+        _memory: true,
+        _history: true,
+        _maxTokens: 4096,
+        _xp: 0
+    });
+    state.agents.push(ag);
+    selectAgent(ag);
+    saveTrainingState();
+    closeNewAgentModal();
+}
+
+function renderAvailableAgents() {
+    const listEl = document.getElementById('availableAgentList');
+    const countEl = document.getElementById('availableAgentCount');
+    const searchEl = document.getElementById('availableAgentSearch') as HTMLInputElement;
+    if (!listEl) return;
+    const query = String(searchEl?.value || '').trim().toLowerCase();
+    const filtered = availableTrainingAgents.filter(agent => {
+        if (!query) return true;
+        return `${agent.name} ${agent.role} ${agent.meta}`.toLowerCase().includes(query);
+    });
+    if (countEl) countEl.textContent = `${filtered.length}/${availableTrainingAgents.length}`;
+    listEl.innerHTML = '';
+    if (!availableTrainingAgents.length) {
+        listEl.innerHTML = '<div class="agent-catalog-empty">Mevcut ajan listesi bulunamadı.</div>';
+        return;
+    }
+    filtered.forEach(agent => {
+        const row = document.createElement('div');
+        row.className = 'agent-pick';
+        const info = document.createElement('div');
+        const name = document.createElement('div');
+        name.className = 'agent-pick-name';
+        name.textContent = agent.name;
+        const meta = document.createElement('div');
+        meta.className = 'agent-pick-meta';
+        meta.textContent = agent.meta || agent.role || 'hazır';
+        info.appendChild(name);
+        info.appendChild(meta);
+        const btn = document.createElement('button');
+        btn.className = 'agent-pick-btn';
+        btn.type = 'button';
+        btn.textContent = 'Ekle';
+        btn.onclick = () => createAgentFromTemplate(agent);
+        row.appendChild(info);
+        row.appendChild(btn);
+        listEl.appendChild(row);
+    });
+    if (!filtered.length) {
+        listEl.innerHTML = '<div class="agent-catalog-empty">Aramaya uygun ajan bulunamadı.</div>';
+    }
+}
+
+async function loadAvailableAgents() {
+    const listEl = document.getElementById('availableAgentList');
+    try {
+        const res = await fetch('/api/egitim-ajanlari', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        availableTrainingAgents = (Array.isArray(data.agents) ? data.agents : [])
+            .map((agent, index) => normalizeTemplateAgent(agent, index));
+        renderAvailableAgents();
+    } catch (err) {
+        availableTrainingAgents = [];
+        if (listEl) listEl.innerHTML = `<div class="agent-catalog-empty">Ajan listesi okunamadı: ${String(err.message || err)}</div>`;
+        const countEl = document.getElementById('availableAgentCount');
+        if (countEl) countEl.textContent = 'hata';
+    }
+}
+
+function normalizeTrainingModule(module, index) {
+    const name = module.name || module.id || `Modül ${index + 1}`;
+    return {
+        raw: module,
+        id: module.id || name,
+        name,
+        layer: module.layer || 'MODULE',
+        meta: [
+            `#${module.order || index + 1}`,
+            module.layer || '',
+            module.skill_count ? `${module.skill_count} beceri` : '',
+            module.engine_bytes ? `${module.engine_bytes} byte` : '',
+        ].filter(Boolean).join(' · '),
+    };
+}
+
+function ensureModuleTrainingAgent() {
+    if (state.activeAgent) return state.activeAgent;
+    const agentDef = NODE_DEFS.find(n => n.key === 'agent');
+    const id = 'ag_' + Date.now();
+    const color = agentDef?.color || '#8b5cf6';
+    const ag = { id, name: 'Modül Eğitim Ajanı', color, nodes: [], conns: [] };
+    ag.nodes.push({
+        type: 'agent',
+        x: 0,
+        y: 0,
+        label: 'Modül Eğitim Ajanı',
+        _color: color,
+        id: 'c_' + id,
+        _model: 'qwen2.5:latest',
+        _role: 'Asker Motoru modüllerinin eğitim haritasını yönetir.',
+        _memory: true,
+        _history: true,
+        _maxTokens: 4096,
+        _xp: 0
+    });
+    state.agents.push(ag);
+    selectAgent(ag);
+    return ag;
+}
+
+function addModuleToTraining(module) {
+    ensureModuleTrainingAgent();
+    const nd = NODE_DEFS.find(n => n.key === 'api') || { color: '#9C27B0' };
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 140 + Math.random() * 90;
+    const node = {
+        type: 'api',
+        x: Math.cos(angle) * dist,
+        y: Math.sin(angle) * dist,
+        label: module.name,
+        _color: nd.color,
+        id: 'mod_' + Date.now(),
+        _desc: [
+            `Katman: ${module.layer}`,
+            `Kaynak: ${module.raw?.source || 'modül envanteri'}`,
+            module.raw?.skill_count ? `Beceri: ${module.raw.skill_count}` : '',
+        ].filter(Boolean).join('\n'),
+        _url: module.id,
+    };
+    state.nodes.push(node);
+    state.conns.push({ from: state.nodes[0], to: node, id: state.conns.length });
+    refreshSidebar();
+    saveTrainingState();
+}
+
+function renderAvailableModules() {
+    const listEl = document.getElementById('availableModuleList');
+    const countEl = document.getElementById('availableModuleCount');
+    const searchEl = document.getElementById('availableModuleSearch') as HTMLInputElement;
+    if (!listEl) return;
+    const query = String(searchEl?.value || '').trim().toLowerCase();
+    const filtered = availableTrainingModules.filter(module => {
+        if (!query) return true;
+        return `${module.name} ${module.layer} ${module.meta}`.toLowerCase().includes(query);
+    });
+    if (countEl) countEl.textContent = `${filtered.length}/${availableTrainingModules.length}`;
+    listEl.innerHTML = '';
+    if (!availableTrainingModules.length) {
+        listEl.innerHTML = '<div class="agent-catalog-empty">Modül listesi bulunamadı.</div>';
+        return;
+    }
+    filtered.forEach(module => {
+        const row = document.createElement('div');
+        row.className = 'agent-pick';
+        const info = document.createElement('div');
+        const name = document.createElement('div');
+        name.className = 'agent-pick-name';
+        name.textContent = module.name;
+        const meta = document.createElement('div');
+        meta.className = 'agent-pick-meta';
+        meta.textContent = module.meta || module.layer || 'modül';
+        info.appendChild(name);
+        info.appendChild(meta);
+        const btn = document.createElement('button');
+        btn.className = 'agent-pick-btn';
+        btn.type = 'button';
+        btn.textContent = 'Ekle';
+        btn.onclick = () => addModuleToTraining(module);
+        row.appendChild(info);
+        row.appendChild(btn);
+        listEl.appendChild(row);
+    });
+    if (!filtered.length) {
+        listEl.innerHTML = '<div class="agent-catalog-empty">Aramaya uygun modül bulunamadı.</div>';
+    }
+}
+
+async function loadAvailableModules() {
+    const listEl = document.getElementById('availableModuleList');
+    try {
+        const res = await fetch('/api/egitim-modulleri', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        availableTrainingModules = (Array.isArray(data.modules) ? data.modules : [])
+            .map((module, index) => normalizeTrainingModule(module, index));
+        renderAvailableModules();
+    } catch (err) {
+        availableTrainingModules = [];
+        if (listEl) listEl.innerHTML = `<div class="agent-catalog-empty">Modül listesi okunamadı: ${String(err.message || err)}</div>`;
+        const countEl = document.getElementById('availableModuleCount');
+        if (countEl) countEl.textContent = 'hata';
+    }
+}
+
+function openNewAgentModal() {
+    const overlay = document.getElementById('newAgentOverlay');
+    const nameInput = document.getElementById('newAgentName') as HTMLInputElement;
+    const roleInput = document.getElementById('newAgentRole') as HTMLTextAreaElement;
+    if (nameInput) nameInput.value = `Ajan ${state.agents.length + 1}`;
+    if (roleInput) roleInput.value = '';
+    if (!availableTrainingAgents.length) loadAvailableAgents();
+    else renderAvailableAgents();
+    if (!availableTrainingModules.length) loadAvailableModules();
+    else renderAvailableModules();
+    overlay?.classList.add('open');
+    setTimeout(() => nameInput?.focus(), 30);
+}
+
+function closeNewAgentModal() {
+    document.getElementById('newAgentOverlay')?.classList.remove('open');
+}
+
+const addAgentBtn = document.getElementById('addAgentBtn');
+if (addAgentBtn) addAgentBtn.onclick = openNewAgentModal;
+
+const newAgentClose = document.getElementById('newAgentClose');
+if (newAgentClose) newAgentClose.onclick = closeNewAgentModal;
+
+const newAgentCancel = document.getElementById('newAgentCancel');
+if (newAgentCancel) newAgentCancel.onclick = closeNewAgentModal;
+
+const newAgentOverlay = document.getElementById('newAgentOverlay');
+if (newAgentOverlay) newAgentOverlay.onclick = e => { if (e.target === newAgentOverlay) closeNewAgentModal(); };
+
+const newAgentMemory = document.getElementById('newAgentMemory');
+if (newAgentMemory) newAgentMemory.onclick = function() { this.classList.toggle('on'); };
+
+const newAgentCreate = document.getElementById('newAgentCreate');
+if (newAgentCreate) newAgentCreate.onclick = createAgentFromForm;
+
+const availableAgentSearch = document.getElementById('availableAgentSearch');
+if (availableAgentSearch) availableAgentSearch.addEventListener('input', renderAvailableAgents);
+
+const availableModuleSearch = document.getElementById('availableModuleSearch');
+if (availableModuleSearch) availableModuleSearch.addEventListener('input', renderAvailableModules);
+
+const newAgentRole = document.getElementById('newAgentRole');
+if (newAgentRole) {
+    newAgentRole.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') createAgentFromForm();
+    });
+}
+
+loadAvailableAgents();
+loadAvailableModules();
 
 // ═══ MOUSE — select, drag, connect ═══
 export function getConnPoints(n) {

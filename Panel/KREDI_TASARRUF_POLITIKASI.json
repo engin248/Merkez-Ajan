@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "mode": "tasarruf",
+  "maxHistoryMessages": 10,
+  "maxStoredHistoryMessages": 30,
+  "mainNumPredict": 512,
+  "routerNumPredict": 12,
+  "numCtx": 4096,
+  "keepAlive": "30m",
+  "maxToolRounds": 3,
+  "useRouterOnlyWhenNeeded": true,
+  "preferLocalRouterModel": true,
+  "localRouterModel": "qwen2.5:latest",
+  "allowCloudFallback": false,
+  "systemReminder": "Kredi tasarruf modu aktif: kisa ve net cevap ver, araclari yalnizca gerekliyse kullan, ayni isi tekrarlama, once yerel ve mevcut bilgiyi degerlendir."
+}

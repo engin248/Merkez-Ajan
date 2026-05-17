@@ -1,99 +1,44 @@
-import AgentActions from '../../core/agent_actions';
-import * as http from 'http';
+import 'dotenv/config';
+import AgentActions from '../core/agent_actions';
+// http/https artık llmBridge.ts'de
 import * as fs from 'fs';
 import * as path from 'path';
 import { formatAiResponse, convertToHtml } from '../utils/textFormatter';
-import { TOOL_DEFINITIONS, executeTool } from '../core/tools';
-import * as db from '../db';
+import { getActiveToolDefinitions, executeTool } from '../core/tools';
+import {
+    applySavingsToPayload,
+    getRouterModel,
+    getSavingsPolicy,
+    guessCategories,
+    recordSavingsEvent,
+    shouldUseRouter,
+    trimHistoryForRequest,
+    trimStoredHistory,
 
-// State Memory functions
-const CHAT_HISTORY_FILE = path.join(__dirname, '..', '..', '.chat_state.json');
-const MAX_HISTORY = 30;
+} from '../utils/usageGovernor';
+import * as db from '../db';
+import { universalLlmRequest, withRetry } from './llmBridge';
+import { tryIntercept } from './interceptor';
+import { Logger } from '../utils/logger';
+import { createError, extractErrorMessage } from '../utils/errorCodes';
+import { AnaPlanner } from '../core/ana_planner';
+
+const logger = new Logger('ChatHandler');
+
+// State Memory — Bellekte tutulan oturum gecmisi
+// NOT: Kalici gecmis veritabaninda saklanir (db.ts).
+// Dosya tabanli .chat_state.json KALDIRILDI — tek kaynak: DB.
 
 let chatHistory: any[] = [];
-try {
-    if (fs.existsSync(CHAT_HISTORY_FILE)) {
-        chatHistory = JSON.parse(fs.readFileSync(CHAT_HISTORY_FILE, 'utf-8'));
-    }
-} catch (e) { chatHistory = []; }
 
 async function saveChatState() {
-    try {
-        await fs.promises.writeFile(CHAT_HISTORY_FILE, JSON.stringify(chatHistory), 'utf-8');
-    } catch (e) {}
+    // Oturum gecmisi sadece bellekte, kalici kayit DB uzerinden yapilir.
 }
 
-function ollamaRequest(payload: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-        const data = JSON.stringify(payload);
-        const oReq = http.request({
-            hostname: 'localhost', port: 11434, path: '/api/chat',
-            method: 'POST', headers: { 'Content-Type': 'application/json' }
-        }, (oRes) => {
-            let buf = '';
-            oRes.on('data', c => buf += c);
-            oRes.on('end', () => {
-                try { resolve(JSON.parse(buf)); }
-                catch (e) { reject(new Error('Ollama JSON parse hatasi')); }
-            });
-        });
-        oReq.on('error', reject);
-        oReq.setTimeout(120000, () => { oReq.destroy(); reject(new Error('Ollama timeout')); });
-        oReq.write(data);
-        oReq.end();
-    });
-}
-
-// ─── KOMUT YAKALAYICI (Interceptor) ───
-// Model tool calling'de başarısız olduğu yaygın komutları
-// doğrudan yakalayıp çalıştırır. Model'e hiç gitmez.
-async function tryIntercept(content: string): Promise<string | null> {
-    const lower = content.toLowerCase().trim();
-
-    // YouTube aç
-    const ytMatch = lower.match(/youtube['']?(?:da|de|dan|den)?\s+(.+)/i);
-    if (ytMatch) {
-        let query = ytMatch[1].replace(/\s*(aç|çal|oynat|ac|cal)\s*$/i, '').trim();
-        if (query) {
-            const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-            await executeTool('url_ac', { url });
-            return `YouTube'da "${query}" arandı ve açıldı.`;
-        }
-    }
-
-    // Google'da ara
-    const googleMatch = lower.match(/google['']?(?:da|de)?\s+(.+?)(?:\s+ara|$)/i)
-        || lower.match(/(?:ara|arat)\s+google['']?(?:da|de)?\s+(.+)/i);
-    if (googleMatch) {
-        const query = googleMatch[1].trim();
-        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        await executeTool('url_ac', { url });
-        return `Google'da "${query}" arandı ve açıldı.`;
-    }
-
-    // Uygulama aç (calc, notepad, vs.)
-    const appMatch = lower.match(/(?:hesap\s*makine|calculator)/i);
-    if (appMatch) { await executeTool('uygulama_ac', { uygulama: 'calc' }); return 'Hesap makinesi açıldı.'; }
-    const noteMatch = lower.match(/(?:not\s*defteri|notepad)/i);
-    if (noteMatch && lower.includes('aç')) { await executeTool('uygulama_ac', { uygulama: 'notepad' }); return 'Not defteri açıldı.'; }
-
-    // Site aç
-    const siteMatch = lower.match(/(.+?)(?:\s+sitesini|\s+sayfasını)\s*aç/i)
-        || lower.match(/aç\s+(.+?)(?:\s+sitesini|\s+sayfasını)/i);
-    if (siteMatch) {
-        const site = siteMatch[1].trim();
-        let url = site;
-        if (!url.startsWith('http')) url = `https://www.${site.replace(/\s+/g, '')}.com`;
-        await executeTool('url_ac', { url });
-        return `${site} açıldı.`;
-    }
-
-    return null; // Yakalayıcı bu komutu tanımadı, model'e devret
-}
 
 export async function handleChatRoute(req: any, res: any) {
     let body = '';
-    req.on('data', chunk => { body += chunk; });
+    req.on('data', (chunk: any) => { body += chunk; });
     req.on('end', async () => {
         res.writeHead(200, {
             'Content-Type': 'text/event-stream',
@@ -106,10 +51,9 @@ export async function handleChatRoute(req: any, res: any) {
             const parsed = JSON.parse(body);
             const content = parsed.prompt || parsed.content || '';
             let selectedModel = parsed.model || 'qwen2.5:14b';
-            const DEPRECATED_MODELS = ['qwen3:8b', 'qwen3.5:latest', 'qwen2.5:latest'];
-            if (DEPRECATED_MODELS.includes(selectedModel)) {
-                selectedModel = 'qwen2.5:14b';
-            }
+            const savingsPolicy = getSavingsPolicy();
+            
+            // Eskiden olan "eski modelleri değiştir" mantığı kaldırıldı, kullanıcı ne seçerse o kullanılacak.
 
             console.log(`\n[GELEN SES] "${content}" (Model: ${selectedModel})`);
 
@@ -119,7 +63,8 @@ export async function handleChatRoute(req: any, res: any) {
                 console.log(`[INTERCEPTOR] Komut yakalandı ve çalıştırıldı: ${interceptResult}`);
                 chatHistory.push({ role: 'user', content });
                 chatHistory.push({ role: 'assistant', content: interceptResult });
-                while (chatHistory.length > MAX_HISTORY) chatHistory.shift();
+                trimStoredHistory(chatHistory, savingsPolicy);
+                recordSavingsEvent('intercept', { model_avoided: selectedModel, content: content.slice(0, 160) });
                 await saveChatState();
 
                 const words = interceptResult.split(/(\\s+)/);
@@ -131,14 +76,37 @@ export async function handleChatRoute(req: any, res: any) {
                 return;
             }
 
+            // ─── SWARM (KOVAN) ORKESTRATÖRÜ YAKALAYICISI ───
+            if (content.trim().toLowerCase().startsWith('!kovan')) {
+                const kovanIntent = content.trim().substring(6).trim();
+                console.log(`[ANA PLANNER] Kovan mimarisi tetiklendi. Görev: ${kovanIntent}`);
+                res.write(`data: ${JSON.stringify({ content: "[Hiyerarşik Kovan] Ana Planner aktif edildi. Adımlar planlanıyor...\n" })}\n\n`);
+                
+                const planner = new AnaPlanner(selectedModel);
+                const finalReport = await planner.executeUserIntent(kovanIntent);
+
+                chatHistory.push({ role: 'user', content });
+                chatHistory.push({ role: 'assistant', content: finalReport });
+                trimStoredHistory(chatHistory, savingsPolicy);
+                await saveChatState();
+
+                const lines = finalReport.split('\n');
+                for (const line of lines) {
+                    res.write(`data: ${JSON.stringify({ content: line + '\n' })}\n\n`);
+                }
+                res.write('data: [DONE]\n\n');
+                res.end();
+                return;
+            }
+
             chatHistory.push({ role: 'user', content: content });
-            // NOT: Geçmiş limiti Ollama yanıtından SONRA uygulanır (off-by-one hatasını önlemek için)
+            // NOT: Kalici gecmis yanittan sonra kirpilir; istege giden gecmis tasarruf politikasi ile ayrica kisaltilir.
             await saveChatState();
 
             let systemPrompt = '';
             const agentId = parsed.agent_id || 'core';
 
-            try { systemPrompt = await db.getSystemPromptForChat(agentId); } catch (dbErr) {}
+            try { systemPrompt = await db.getSystemPromptForChat(agentId); } catch (dbErr: unknown) { logger.error(createError('DB_SAVE_FAILED', extractErrorMessage(dbErr), dbErr).message); }
 
             if (!systemPrompt) {
                 const modelFolderMap: any = {
@@ -156,54 +124,91 @@ export async function handleChatRoute(req: any, res: any) {
                 } catch (err) {}
             }
 
-            if (!systemPrompt) systemPrompt = 'Sen yetenekli ve pratik bir yapay zeka asistanisin. Turkce konus.';
-            systemPrompt += `\n\n[KİŞİSEL ASİSTAN KURALLARI — MUTLAK]
-- Sen kullanıcının kişisel bilgisayar asistanısın. AÇIKLAMA YAPMA, DOĞRUDAN YAP.
-- Kullanıcı bir şey yapmanı istediğinde NASIL yapılacağını anlatma, ARACI ÇAĞIR VE YAP.
-- "YouTube'da X aç/çal" → url_ac aracını kullan
-- "Google'da X ara" → url_ac aracını kullan
-- "Hesap makinesini aç" / "Notepad aç" → uygulama_ac aracını kullan
-- "GPU/RAM/CPU durumu" → sistem_bilgisi aracını kullan
-- "Dosyaları listele/grupla/taşı/sil/organize et" → pc_komutu_calistir aracıyla PowerShell komutu çalıştır
-- "X sitesini aç" → url_ac aracını kullan
-- "Ekrana bak" / "Ekranda ne var" / "Ne görüyorsun" → ekran_analiz aracını kullan
-- "X dosyasını aç" → dosya_ac aracını kullan
-- Fiyat/güncel bilgi → web_ara aracını çağır
-- ASLA "şu komutu çalıştırabilirsiniz" veya "şu adımları takip edin" gibi AÇIKLAMA yapma
-- ASLA "bunu yapamam" deme
-- Bilmediğin bilgiyi uydurma, emoji kullanma
-- Kullanıcı adı Esisya, masaüstü: C:\\Users\\Esisya\\Desktop`;
+            if (!systemPrompt) systemPrompt = 'Sen yetenekli, zeki ve otonom bir yapay zeka asistanısın. Türkçe konuş.';
+            systemPrompt += `\n\n[OTONOM AJAN PRENSİPLERİ]
+- Sen sadece emir uygulayan bir bot değil, kendi kararlarını alabilen özgür bir ajansın. Kullanıcının hedefine ulaşması için araçları kendi mantığınla en doğru şekilde seç ve kullan.
+- Araçlara (Tools) göndereceğin parametreleri tamamen kendi zekanı kullanarak optimize et. (Örneğin; arama araçlarına uzun cümleler değil, hedefe yönelik anahtar kelimeler gönderilir).
+- Görevi tamamlamak için araçları dilediğin sırada ve sayıda arka arkaya çağırabilirsin.
+- Nasıl yapacağını anlatarak vakit kaybetme, doğrudan inisiyatif al ve eyleme geç (Aracı çalıştır).
+- Asla "Şunu yapabilirsiniz" deme, yapabiliyorsan kendin yap.`;
+
+            if (savingsPolicy.enabled) {
+                systemPrompt += `\n\n[TASARRUF KATMANI]\n- ${savingsPolicy.systemReminder}\n- Arac cagrilarini birlestir, zorunlu degilse web/API/bulut kullanma.\n- Gereksiz uzun cevap verme; kullanicinin mevcut sayfadaki isini bitirmeye odaklan.`;
+            }
 
             const messagesToSend = [
                 { role: 'system', content: systemPrompt },
-                ...chatHistory.slice(0, -1),
-                { role: 'user', content }
+                ...trimHistoryForRequest(chatHistory, content, savingsPolicy),
             ];
-
-            messagesToSend.push({ role: 'system', content: 'KRİTİK: AÇIKLAMA YAPMA, DOĞRUDAN ARACI ÇAĞIR VE YAP. Kullanıcı dosya taşımak, gruplamak, silmek, organize etmek istiyorsa pc_komutu_calistir aracıyla PowerShell komutu çalıştır. "Şu komutu çalıştırabilirsiniz" gibi cümleler YASAK. İşlemi KENDİN yap ve kısa rapor ver.' });
             
-            const basePayload = {
+            // ─── YÖNLENDİRİCİ (ROUTER) ÇAĞRISI ───
+            const routerPrompt = `Sen bir Yönlendirici (Router) yapay zekasın. Görevin, kullanıcının talebini analiz edip hangi araç kategorilerine ihtiyaç duyulacağını tespit etmektir. SADECE virgülle ayrılmış kategori isimleri ile cevap ver, asla açıklama yapma. Mevcut kategoriler: Media, Communication, Web, System. Kullanıcı talebi: "${content}"`;
+            
+            let allowedCategories: string[] | undefined = guessCategories(content);
+            if (!shouldUseRouter(content, savingsPolicy)) {
+                allowedCategories = [];
+                recordSavingsEvent('router_skipped', { reason: 'simple_request', content: content.slice(0, 160) });
+                console.log(`[ROUTER] Tasarruf: basit istek, router atlandi.`);
+            } else if (!allowedCategories || !savingsPolicy.enabled) {
+                try {
+                    const routerModel = getRouterModel(selectedModel, savingsPolicy);
+                    console.log(`[ROUTER] Kategori tespiti yapılıyor... (Model: ${routerModel})`);
+                    recordSavingsEvent('router_called', { model: routerModel, selectedModel });
+                    const routerPayload = applySavingsToPayload({
+                        model: routerModel,
+                        messages: [{ role: 'system', content: routerPrompt }],
+                        stream: false,
+                        options: { temperature: 0.1, num_predict: 20 },
+                        think: false
+                    }, 'router', savingsPolicy);
+                    const routerResponse = await universalLlmRequest(routerPayload);
+                    if (routerResponse && routerResponse.message && routerResponse.message.content) {
+                        const respText = routerResponse.message.content.toUpperCase();
+                        allowedCategories = [];
+                        if (respText.includes('MEDIA')) allowedCategories.push('Media');
+                        if (respText.includes('COMMUNICATION')) allowedCategories.push('Communication');
+                        if (respText.includes('WEB')) allowedCategories.push('Web');
+                        if (respText.includes('SYSTEM')) allowedCategories.push('System');
+                        
+                        if (allowedCategories.length === 0) allowedCategories = undefined; // Kategori bulamazsa hepsini getir
+                        console.log(`[ROUTER] Tespit edilen kategoriler: ${allowedCategories ? allowedCategories.join(', ') : 'Hepsi'}`);
+                    }
+                } catch(e) {
+                    allowedCategories = savingsPolicy.enabled ? [] : undefined;
+                    console.log(`[ROUTER] Router hatası, tasarruf modunda sadece cekirdek araclar yukleniyor.`);
+                }
+            } else {
+                console.log(`[ROUTER] Tasarruf: kategori yerel tahmin edildi: ${allowedCategories.join(', ')}`);
+            }
+
+            const basePayload = applySavingsToPayload({
                 model: selectedModel,
                 messages: messagesToSend,
                 stream: false,
                 keep_alive: "24h",
-                tools: TOOL_DEFINITIONS,
-                options: { temperature: 0.6, top_p: 0.85, top_k: 40, repeat_penalty: 1.8, num_predict: 512, num_ctx: 8192, presence_penalty: 0.8, frequency_penalty: 0.7 },
+                tools: getActiveToolDefinitions(allowedCategories),
+                options: { temperature: 0.1, num_predict: 1024, num_ctx: 8192 },
                 think: false
-            };
+            }, 'main', savingsPolicy);
 
-            let response = await ollamaRequest(basePayload);
+            recordSavingsEvent('main_call', {
+                model: selectedModel,
+                messages: messagesToSend.length,
+                tools: Array.isArray(basePayload.tools) ? basePayload.tools.length : 0,
+                num_predict: basePayload.options?.num_predict,
+                num_ctx: basePayload.options?.num_ctx,
+            });
+            let response = await universalLlmRequest(basePayload);
 
-            // FALLBACK logic
-            if (response.error && response.error.includes("not found")) {
-                console.log(`[YEDEK MODEL] ${basePayload.model} bulunamadı. Mevcut modelleri kontrol ediyor...`);
-                // Döngüyü kırmak için sabit bir fallback zinciri kullan
-                const FALLBACK_CHAIN = ['qwen2.5:14b', 'qwen2.5:latest', 'qwen2.5:7b'];
-                const currentIdx = FALLBACK_CHAIN.indexOf(basePayload.model);
-                const nextModel = FALLBACK_CHAIN[currentIdx + 1] || FALLBACK_CHAIN[FALLBACK_CHAIN.length - 1];
-                if (nextModel !== basePayload.model) {
-                    basePayload.model = nextModel;
-                    response = await ollamaRequest(basePayload);
+            // FALLBACK logic (Seçilen model hata verirse veya çöküp yanıt veremezse direkt Gemini devreye girer)
+            if (response.error || !response.message) {
+                if (savingsPolicy.enabled && !savingsPolicy.allowCloudFallback) {
+                    recordSavingsEvent('cloud_fallback_blocked', { failedModel: basePayload.model, error: response.error || 'empty_response' });
+                    throw new Error(`${basePayload.model} yanıt veremedi. Tasarruf modu bulut yedek modelini otomatik kullanmadı; yerel modeli secip tekrar deneyebilirsin.`);
+                } else {
+                    console.log(`[YEDEK MODEL] ${basePayload.model} yanıt veremedi veya bulunamadı. Gemini'ye geçiliyor...`);
+                    basePayload.model = 'gemini-2.5-flash';
+                    response = await universalLlmRequest(basePayload);
                 }
             }
 
@@ -212,22 +217,41 @@ export async function handleChatRoute(req: any, res: any) {
             let aiMessage = response.message;
             let toolCallMessages = [...messagesToSend];
             let toolRound = 0;
-            const MAX_TOOL_ROUNDS = 3;
+            const MAX_TOOL_ROUNDS = savingsPolicy.enabled ? savingsPolicy.maxToolRounds : 8;
+            const toolCallHistory: string[] = [];
 
             while (aiMessage && aiMessage.tool_calls && aiMessage.tool_calls.length > 0 && toolRound < MAX_TOOL_ROUNDS) {
                 toolRound++;
+
+                // Tekrar algilama: Ayni arac+arguman cagrisi daha once yapildiysa donguyu kir
+                const currentCallSignature = aiMessage.tool_calls
+                    .map((tc: any) => `{tc.function.name}:{JSON.stringify(tc.function.arguments)}`)
+                    .sort().join('|');
+                if (toolCallHistory.includes(currentCallSignature)) {
+                    logger.warn(`Sonsuz dongu algilandi (tur {toolRound})`, currentCallSignature.slice(0, 120));
+                    recordSavingsEvent('loop_detected', { round: toolRound, signature: currentCallSignature.slice(0, 200) });
+                    break;
+                }
+                toolCallHistory.push(currentCallSignature);
+
                 toolCallMessages.push(aiMessage);
 
                 for (const tc of aiMessage.tool_calls) {
                     const toolName = tc.function.name;
                     const toolArgs = tc.function.arguments;
+                    recordSavingsEvent('tool_call', { toolName, round: toolRound });
                     res.write(`data: ${JSON.stringify({ content: `<br><i>[Sistem ${toolName} aracını kullanıyor...]</i><br>` })}\n\n`);
                     const result = await executeTool(toolName, toolArgs);
                     const toolOutput = result.success ? result.output : `HATA: ${result.error}`;
-                    toolCallMessages.push({ role: 'tool', content: toolOutput });
+                    toolCallMessages.push({ 
+                        role: 'tool', 
+                        name: toolName,
+                        tool_call_id: tc.id, // Gemini/OpenAI sarti
+                        content: toolOutput 
+                    });
                 }
 
-                response = await ollamaRequest({ ...basePayload, messages: toolCallMessages });
+                response = await universalLlmRequest({ ...basePayload, messages: toolCallMessages });
                 aiMessage = response.message;
             }
 
@@ -245,15 +269,23 @@ export async function handleChatRoute(req: any, res: any) {
                     fullAiResponse = toolRound > 0 ? 'İşlem tamamlandı.' : 'Tamam, işlem başlatılıyor.';
                 }
 
-                chatHistory.push({ role: 'assistant', content: fullAiResponse });
+                // HAFIZA KORUMA: Modelin sızdırdığı ham JSON (tool_call) formatlarını temizle (örn: ićc ... </tool_call>)
+                let cleanHistoryResponse = fullAiResponse.replace(/ićc[\s\S]*?<\/tool_call>/gi, '').trim();
+                // Bazen model sadece JSON sızdırır, temizledikten sonra boş kalırsa varsayılan metin ata
+                if (!cleanHistoryResponse) {
+                    cleanHistoryResponse = 'İşlem tamamlandı.';
+                }
+
+                chatHistory.push({ role: 'assistant', content: cleanHistoryResponse });
                 // Geçmiş limitini burada uygula (user + assistant eklenmiş haliyle)
-                while (chatHistory.length > MAX_HISTORY) chatHistory.shift();
+                trimStoredHistory(chatHistory, savingsPolicy);
+                recordSavingsEvent('response', { model: selectedModel, toolRounds: toolRound, length: cleanHistoryResponse.length });
                 await saveChatState();
 
                 try {
                     await db.addChatMessage(agentId, 'user', content);
                     await db.addChatMessage(agentId, 'assistant', fullAiResponse);
-                } catch (dbErr) {}
+                } catch (dbErr: unknown) { logger.error(createError('DB_SAVE_FAILED', extractErrorMessage(dbErr), dbErr).message); }
 
                 const htmlResponse = convertToHtml(fullAiResponse);
                 const words = htmlResponse.split(/(\s+)/);

@@ -1,4 +1,5 @@
 import { Logger } from './utils/logger';
+import { createError, extractErrorMessage } from './utils/errorCodes';
 const logger = new Logger('Database');
 /**
  * ═══════════════════════════════════════════════════════════
@@ -19,7 +20,49 @@ const pool = new Pool({
 
 // Bağlantı test
 pool.on('connect', () => logger.info('PostgreSQL connection established'));
-pool.on('error', (err) => logger.error('PostgreSQL error:', err.message));
+pool.on('error', (err: Error) => logger.error(createError('DB_CONNECTION_FAILED', err.message, err).message));
+
+// ─── TİP TANIMLARI ───
+export interface AgentRecord {
+  id: string;
+  label: string;
+  sub?: string | null;
+  x: number;
+  y: number;
+  r: number;
+  color: string;
+  type: string;
+  model?: string | null;
+  parent?: string | null;
+  children: string[];
+  info: string[];
+  capabilities: string[];
+  prompt?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface EdgeRecord {
+  from: string;
+  to: string;
+  color: string;
+}
+
+export interface AgentMemoryRecord {
+  agent_id: string;
+  identity: string;
+  role: string;
+  personality: string;
+  system_prompt: string;
+  capabilities: string[];
+  rules: string[];
+  pc_tools: string[];
+  speech_rules: string;
+  extra_context: string;
+  version: number;
+  is_active: boolean;
+}
+
 
 // ═══════════════════════════════════════════════════════════
 // AGENTS (Ajan CRUD)
@@ -38,7 +81,7 @@ async function getAllAgents() {
 /**
  * Tek bir ajanı ID ile getir
  */
-async function getAgent(id) {
+async function getAgent(id: string): Promise<AgentRecord | null> {
   const { rows } = await pool.query('SELECT * FROM agents WHERE id = $1', [id]);
   return rows[0] || null;
 }
@@ -46,7 +89,7 @@ async function getAgent(id) {
 /**
  * Ajan ekle veya güncelle (upsert)
  */
-async function upsertAgent(agent) {
+async function upsertAgent(agent: Partial<AgentRecord>): Promise<AgentRecord> {
   const q = `
     INSERT INTO agents (id, label, sub, x, y, r, color, type, model, parent, children, info, capabilities)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
@@ -88,7 +131,7 @@ async function upsertAgent(agent) {
 /**
  * Tüm ajanları toplu kaydet (tam graph state)
  */
-async function saveAllAgents(agents) {
+async function saveAllAgents(agents: Partial<AgentRecord>[]): Promise<{ success: boolean; count: number }> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -114,7 +157,7 @@ async function saveAllAgents(agents) {
     }
     await client.query('COMMIT');
     return { success: true, count: agents.length };
-  } catch (err) {
+  } catch (err: unknown) {
     await client.query('ROLLBACK');
     throw err;
   } finally {
@@ -125,7 +168,7 @@ async function saveAllAgents(agents) {
 /**
  * Ajan sil (ve bağlı edge/chat'ler CASCADE ile silinir)
  */
-async function deleteAgent(id) {
+async function deleteAgent(id: string): Promise<void> {
   await pool.query('DELETE FROM agents WHERE id = $1', [id]);
 }
 
@@ -138,7 +181,7 @@ async function getAllEdges() {
   return rows.map(r => ({ from: r.from_node, to: r.to_node, color: r.color }));
 }
 
-async function saveAllEdges(edges) {
+async function saveAllEdges(edges: EdgeRecord[]): Promise<{ success: boolean; count: number }> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -151,7 +194,7 @@ async function saveAllEdges(edges) {
     }
     await client.query('COMMIT');
     return { success: true, count: edges.length };
-  } catch (err) {
+  } catch (err: unknown) {
     await client.query('ROLLBACK');
     throw err;
   } finally {
@@ -166,7 +209,7 @@ async function saveAllEdges(edges) {
 /**
  * Bir ajanın sohbet geçmişini getir (son N mesaj)
  */
-async function getChatHistory(agentId, limit = 100) {
+async function getChatHistory(agentId: string, limit: number = 100) {
   const { rows } = await pool.query(
     `SELECT role, content, created_at FROM chat_messages
      WHERE agent_id = $1
@@ -180,7 +223,7 @@ async function getChatHistory(agentId, limit = 100) {
 /**
  * Sohbete mesaj ekle
  */
-async function addChatMessage(agentId, role, content) {
+async function addChatMessage(agentId: string, role: string, content: string) {
   const { rows } = await pool.query(
     `INSERT INTO chat_messages (agent_id, role, content)
      VALUES ($1, $2, $3)
@@ -193,7 +236,7 @@ async function addChatMessage(agentId, role, content) {
 /**
  * Bir ajanın sohbet geçmişini sil (Yeni Sohbet)
  */
-async function clearChatHistory(agentId) {
+async function clearChatHistory(agentId: string): Promise<void> {
   await pool.query('DELETE FROM chat_messages WHERE agent_id = $1', [agentId]);
 }
 
@@ -204,7 +247,7 @@ async function clearChatHistory(agentId) {
 /**
  * Tam graph state kaydet (agents + edges)
  */
-async function saveGraphState(agents, edges) {
+async function saveGraphState(agents: Partial<AgentRecord>[], edges: EdgeRecord[]) {
   const agentResult = await saveAllAgents(agents);
   const edgeResult = await saveAllEdges(edges);
   return { agents: agentResult.count, edges: edgeResult.count };
@@ -226,7 +269,7 @@ async function loadGraphState() {
 /**
  * Ana/Yönetici ajanın hafızasını getir
  */
-async function getAgentMemory(agentId) {
+async function getAgentMemory(agentId: string): Promise<AgentMemoryRecord | null> {
   const { rows } = await pool.query(
     'SELECT * FROM agent_memory WHERE agent_id = $1 AND is_active = true',
     [agentId]
@@ -237,7 +280,7 @@ async function getAgentMemory(agentId) {
 /**
  * Ana/Yönetici ajanın hafızasını kaydet/güncelle (upsert)
  */
-async function upsertAgentMemory(agentId, memory) {
+async function upsertAgentMemory(agentId: string, memory: Partial<AgentMemoryRecord>) {
   // Önce eski değeri log'a yaz
   const existing = await getAgentMemory(agentId);
   if (existing) {
@@ -283,7 +326,7 @@ async function upsertAgentMemory(agentId, memory) {
 /**
  * İşçi ajanın basit prompt'unu getir
  */
-async function getWorkerPrompt(agentId) {
+async function getWorkerPrompt(agentId: string): Promise<string> {
   const { rows } = await pool.query(
     'SELECT prompt FROM agents WHERE id = $1',
     [agentId]
@@ -294,7 +337,7 @@ async function getWorkerPrompt(agentId) {
 /**
  * İşçi ajanın basit prompt'unu kaydet
  */
-async function setWorkerPrompt(agentId, prompt) {
+async function setWorkerPrompt(agentId: string, prompt: string) {
   await pool.query(
     'UPDATE agents SET prompt = $1, updated_at = NOW() WHERE id = $2',
     [prompt, agentId]
@@ -307,7 +350,7 @@ async function setWorkerPrompt(agentId, prompt) {
  * Ana/Yönetici → agent_memory tablosundan
  * İşçi → agents.prompt kolonundan
  */
-async function getSystemPromptForChat(agentId) {
+async function getSystemPromptForChat(agentId: string): Promise<string> {
   // Önce agent_memory'de var mı kontrol et (Ana/Yönetici)
   const memory = await getAgentMemory(agentId);
   if (memory && memory.system_prompt) {
@@ -320,13 +363,52 @@ async function getSystemPromptForChat(agentId) {
 /**
  * Hafıza değişiklik loglarını getir
  */
-async function getMemoryLog(agentId, limit = 20) {
+async function getMemoryLog(agentId: string, limit: number = 20) {
   const { rows } = await pool.query(
     `SELECT * FROM memory_log WHERE agent_id = $1
      ORDER BY changed_at DESC LIMIT $2`,
     [agentId, limit]
   );
   return rows;
+}
+
+// ═══════════════════════════════════════════════════════════
+// HİYERARŞİK KOVAN (COMMITTEE) SEMANTİK HAFIZASI
+// ═══════════════════════════════════════════════════════════
+
+/**
+ * Komite tecrübelerini kaydet
+ */
+async function saveCommitteeLesson(domainName: string, lesson: string) {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS committee_lessons (
+      id SERIAL PRIMARY KEY,
+      domain VARCHAR(50) NOT NULL,
+      lesson TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  await pool.query(
+    'INSERT INTO committee_lessons (domain, lesson) VALUES ($1, $2)',
+    [domainName, lesson]
+  );
+  return true;
+}
+
+/**
+ * Komite tecrübelerini getir
+ */
+async function getCommitteeLessons(domainName: string): Promise<string[]> {
+  try {
+    const { rows } = await pool.query(
+      'SELECT lesson FROM committee_lessons WHERE domain = $1 ORDER BY created_at ASC',
+      [domainName]
+    );
+    return rows.map(r => r.lesson);
+  } catch (err) {
+    return [];
+  }
 }
 
 /**
@@ -336,8 +418,8 @@ async function testConnection() {
   try {
     const { rows } = await pool.query('SELECT NOW() as now, current_database() as db');
     return { connected: true, time: rows[0].now, database: rows[0].db };
-  } catch (err) {
-    return { connected: false, error: err.message };
+  } catch (err: unknown) {
+    return { connected: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
 
@@ -354,7 +436,7 @@ export {
   // Agent Memory
   getAgentMemory, upsertAgentMemory,
   getWorkerPrompt, setWorkerPrompt,
-  getSystemPromptForChat, getMemoryLog,
+  getSystemPromptForChat, getMemoryLog, saveCommitteeLesson, getCommitteeLessons,
   // Utils
   testConnection
 };

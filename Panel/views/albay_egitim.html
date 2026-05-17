@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALBAY — Eğitim ve Beceri Hafızası</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#090b10; --panel:#121826; --line:rgba(255,255,255,.08); --text:#e5e7eb; --muted:#94a3b8; --red:#ef4444; --blue:#38bdf8; --green:#22c55e; --amber:#f59e0b; }
+        * { box-sizing:border-box; }
+        body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font-family:Inter, system-ui, sans-serif; }
+        header { height:58px; padding:0 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); background:#0f172a; }
+        .brand { display:flex; align-items:center; gap:12px; }
+        .mark { width:34px; height:34px; border-radius:8px; display:grid; place-items:center; color:var(--red); background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); font:800 13px JetBrains Mono; }
+        h1 { margin:0; font-size:15px; }
+        .sub { color:var(--muted); font-size:11px; margin-top:2px; }
+        .status { font:700 12px JetBrains Mono; color:var(--green); }
+        .top-links { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+        .top-link { color:#cbd5e1; text-decoration:none; font:700 11px Inter; padding:7px 9px; border:1px solid var(--line); border-radius:7px; background:rgba(255,255,255,.03); }
+        .top-link:hover { border-color:rgba(255,255,255,.16); }
+        main { padding:18px; display:grid; grid-template-columns:360px 1fr; gap:18px; }
+        .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; min-width:0; }
+        .head { padding:14px 16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:12px; align-items:center; }
+        .title { font-size:12px; font-weight:800; color:#cbd5e1; text-transform:uppercase; letter-spacing:.45px; }
+        .body { padding:14px; }
+        .metric { display:flex; justify-content:space-between; gap:10px; padding:10px 11px; border:1px solid rgba(255,255,255,.055); background:rgba(255,255,255,.03); border-radius:7px; margin-bottom:9px; }
+        .metric span:first-child { color:var(--muted); font-size:12px; }
+        .metric span:last-child { font:800 12px JetBrains Mono; color:#fff; text-align:right; }
+        .truth { margin-top:10px; padding:11px; border-radius:7px; background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.22); color:#cbd5e1; font-size:11px; line-height:1.55; }
+        .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+        .scroll { max-height:calc(100vh - 190px); overflow:auto; padding:12px; }
+        .item { padding:11px 12px; border-radius:8px; border:1px solid rgba(255,255,255,.06); background:rgba(255,255,255,.025); margin-bottom:8px; }
+        .item-top { display:flex; justify-content:space-between; gap:10px; font-size:12px; font-weight:800; }
+        .item-sub { margin-top:5px; color:var(--muted); font-size:11px; line-height:1.45; overflow-wrap:anywhere; }
+        .pill { color:var(--blue); font:800 10px JetBrains Mono; }
+        .bar { height:7px; border-radius:999px; background:rgba(255,255,255,.06); overflow:hidden; margin-top:7px; }
+        .fill { height:100%; background:var(--red); border-radius:inherit; }
+        @media (max-width:1050px) { main { grid-template-columns:1fr; } .grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <div class="mark">000</div>
+            <div>
+                <h1>ALBAY Eğitim ve Beceri Hafızası</h1>
+                <div class="sub">Eski masaüstü Albay panel verisi ana Asker Motoru panelinden okunuyor</div>
+            </div>
+        </div>
+        <div class="top-links">
+            <a class="top-link" href="/">Ana Panel</a>
+            <a class="top-link" href="/training.html">Ajan Eğitimi</a>
+            <a class="top-link" href="/egitim_departmani.html">Eğitim Dep.</a>
+            <a class="top-link" href="/arge_departmani.html">Ar-Ge</a>
+            <div class="status" id="status">BAĞLANIYOR</div>
+        </div>
+    </header>
+    <main>
+        <section class="panel">
+            <div class="head"><div class="title">Komuta Özeti</div></div>
+            <div class="body" id="summary"></div>
+        </section>
+        <section class="grid">
+            <section class="panel">
+                <div class="head"><div class="title">Canlı ALBAY Beceri Odağı</div><div class="pill" id="catCount">-</div></div>
+                <div class="scroll" id="categories"></div>
+            </section>
+            <section class="panel">
+                <div class="head"><div class="title">Komuta Zinciri Ajanları</div><div class="pill" id="agentCount">-</div></div>
+                <div class="scroll" id="agents"></div>
+            </section>
+        </section>
+    </main>
+    <script src="frontend_src/albay_egitim.ts?v=20260515-live-skills"></script>
+</body>
+</html>
